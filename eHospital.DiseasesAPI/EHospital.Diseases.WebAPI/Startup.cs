@@ -15,6 +15,7 @@ using EHospital.Diseases.Data;
 using EHospital.Diseases.BusinessLogic.Contracts;
 using EHospital.Diseases.BusinessLogic.Services;
 using EHospital.Diseases.Model;
+using AutoMapper;
 
 namespace EHospital.Diseases.WebAPI
 {
@@ -32,12 +33,17 @@ namespace EHospital.Diseases.WebAPI
         {
             string connection = @"Server=DESKTOP-PU90CNF;Database=EHospitalDB;Trusted_Connection=True;ConnectRetryCount=0";
             services.AddDbContext<DiseaseDBContext>(options => options.UseSqlServer(connection));
+            Mapper.Initialize(cfg => cfg.AddProfile<AutomapperProfileConfig>());
+
             services.AddScoped<IRepository<Disease>, Repository<Disease>>();
             services.AddScoped<IRepository<DiseaseCategory>, Repository<DiseaseCategory>>();
             services.AddScoped<IRepository<PatientDisease>, Repository<PatientDisease>>();
-            services.AddScoped<IDisease, DiseaseService>();
-            services.AddScoped<IDiseaseCategory, DiseaseCategoryService>();
-            // TODO: create also PatientDisease service
+            services.AddScoped<IRepository<UsersData>, Repository<UsersData>>();
+
+            services.AddScoped<IDiseaseService, DiseaseService>();
+            services.AddScoped<IDiseaseCategoryService, DiseaseCategoryService>();
+            
+            services.AddScoped<IPatientDiseaseService, PatientDiseaseService>();
             services.AddSingleton<IUniteOfWork, UnitOfWork>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
                        

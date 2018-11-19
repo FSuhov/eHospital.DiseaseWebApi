@@ -14,8 +14,10 @@ namespace EHospital.Diseases.Model
 
         public int UserId { get; set; }
 
+        [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
 
+        [DataType(DataType.Date)]
         public DateTime EndDate { get; set; }
 
         public string Note { get; set; }

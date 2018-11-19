@@ -37,6 +37,7 @@ namespace EHospital.Diseases.Data
             {
                 return item;
             }
+
             return null;
         }
 
@@ -46,7 +47,9 @@ namespace EHospital.Diseases.Data
             {
                 throw new ArgumentNullException("Tried to insert null entity!");
             }
+
             _entities.Add(entity);
+
             return entity;
         }
 
@@ -54,6 +57,7 @@ namespace EHospital.Diseases.Data
         {
             _entities.Attach(entity);
             _context.Entry(entity).State = EntityState.Modified;
+
             return entity;
         }
 
@@ -61,6 +65,7 @@ namespace EHospital.Diseases.Data
         {
             _entities.Attach(entity);
             _context.Entry(entity).State = EntityState.Modified;
+
             return entity;
         }
     }

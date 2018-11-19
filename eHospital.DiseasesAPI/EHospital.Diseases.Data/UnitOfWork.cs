@@ -15,7 +15,7 @@ namespace EHospital.Diseases.Data
         private Repository<Disease> _diseases;
         private Repository<PatientInfo> _patients;
         private Repository<DiseaseCategory> _categories;
-        private Repository<UserData> _users;
+        private Repository<UsersData> _users;
         private Repository<DiseaseCategory> _diseaseCategories;
         private Repository<PatientDisease> _patientDiseases;
 
@@ -60,13 +60,13 @@ namespace EHospital.Diseases.Data
             }
         }
 
-        public IRepository<UserData> Users
+        public IRepository<UsersData> Users
         {
             get
             {
                 if (_users == null)
                 {
-                    _users = new Repository<UserData>(_context);
+                    _users = new Repository<UsersData>(_context);
                 }
 
                 return _users;

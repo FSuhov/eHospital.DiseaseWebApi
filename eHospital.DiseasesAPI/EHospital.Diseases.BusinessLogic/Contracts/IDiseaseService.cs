@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace EHospital.Diseases.BusinessLogic.Contracts
 {
-    public interface IDisease
+    public interface IDiseaseService
     {
         IQueryable<Disease> GetAllDiseases();
 

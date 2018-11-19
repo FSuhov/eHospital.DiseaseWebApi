@@ -8,28 +8,46 @@ using System.Threading.Tasks;
 
 namespace EHospital.Diseases.BusinessLogic.Services
 {
-    public class DiseaseService : IDisease
+    /// <summary>
+    /// Represents business logic for handling controller's requests
+    /// </summary>
+    public class DiseaseService : IDiseaseService
     {
-        IUniteOfWork _unitOfWork;
+        private readonly IUniteOfWork _unitOfWork;
 
-        public DiseaseService(IUniteOfWork uow)
+        public DiseaseService(IUniteOfWork unitOfWork)
         {
-            _unitOfWork = uow;
+            _unitOfWork = unitOfWork;
         }
+
+        /// <summary>
+        /// Gets the collection of Diseases existing in the database
+        /// </summary>
+        /// <returns> The collection of Diseases objects sorted alphabetically</returns>
         public IQueryable<Disease> GetAllDiseases()
         {
-            var result = _unitOfWork.Diseases.GetAll().Where(d => d.IsDeleted != true);           
+            var result = _unitOfWork.Diseases.GetAll();           
 
             return result.OrderBy(d => d.Name);
         }
 
+        /// <summary>
+        /// Gets the collection of Diseases belonging to specified category
+        /// </summary>
+        /// <param name="categoryId">Id of category to look for</param>
+        /// <returns> The collection of Diseases objects sorted alphabetically</returns>
         public IQueryable<Disease> GetDiseasedByCategory(int categoryId)
         {
-            var result = _unitOfWork.Diseases.GetAll().Where(d => d.IsDeleted != true && d.CategoryId == categoryId);
+            var result = _unitOfWork.Diseases.GetAll().Where(d => d.CategoryId == categoryId);
 
             return result.OrderBy(d => d.Name);
         }
 
+        /// <summary>
+        /// Looks for Disease object with requested Id
+        /// </summary>
+        /// <param name="diseaseId">Id of Disease to look for</param>
+        /// <returns>Disease object with specified Id or NULL if not found</returns>
         public Disease GetDiseaseById(int diseaseId)
         {
             var result = _unitOfWork.Diseases.Get(diseaseId);
@@ -37,6 +55,12 @@ namespace EHospital.Diseases.BusinessLogic.Services
             return result;
         }
 
+        /// <summary>
+        /// Adds Disease object to the database
+        /// Throws exception if object with the same name alrady exists in the database
+        /// </summary>
+        /// <param name="disease">New Disease object</param>
+        /// <returns>Disease object that has been added </returns>
         public async Task<Disease> AddDiseaseAsync(Disease disease)
         {
             if (_unitOfWork.Diseases.GetAll().Any(d => d.Name == disease.Name))
@@ -46,29 +70,37 @@ namespace EHospital.Diseases.BusinessLogic.Services
 
             Disease result = _unitOfWork.Diseases.Insert(disease);
             await _unitOfWork.Save();
+
             return result;
         }
 
-        public async Task<Disease> DeleteDiseaseAsync(int id)
+        /// <summary>
+        /// Sets IsDisabled property of Disease instance to true 
+        /// Throws exception if not found.
+        /// Throws exception if there are other records connected to this disease in the PatientDisease table
+        /// </summary>
+        /// <param name="diseaseId">Disease object that has been disabled</param>
+        public async Task<Disease> DeleteDiseaseAsync(int diseaseId)
         {
-            var result = _unitOfWork.Diseases.Get(id);
+            var result = _unitOfWork.Diseases.Get(diseaseId);
 
             if (result == null)
             {
-                throw new NullReferenceException("No disease found.");
+                throw new ArgumentNullException("No disease found.");
             }
 
             if (_unitOfWork.PatientDiseases.GetAll().Count() != 0)
             {
                 if (_unitOfWork.PatientDiseases.GetAll().Any(d => d.DiseaseId == result.DiseaseId))
                 {
-                    throw new ArgumentException("There are existing records containing this Disease.");
+                    throw new InvalidOperationException("There are existing records containing this Disease.");
                 }
             }
 
             result.IsDeleted = true;
             _unitOfWork.Diseases.Delete(result);
             await _unitOfWork.Save();
+
             return result;
         }
     }

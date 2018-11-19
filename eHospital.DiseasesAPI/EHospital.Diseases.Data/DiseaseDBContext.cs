@@ -20,9 +20,9 @@ namespace EHospital.Diseases.Data
 
         public virtual DbSet<PatientDisease> PatientDiseases { get; set; }
 
-        public virtual DbSet<PatientInfo> Patients { get; set; }
+        public virtual DbSet<PatientInfo> PatientInfo { get; set; }
 
-        public virtual DbSet<UserData> Users { get; set; }
+        public virtual DbSet<UsersData> UsersData { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

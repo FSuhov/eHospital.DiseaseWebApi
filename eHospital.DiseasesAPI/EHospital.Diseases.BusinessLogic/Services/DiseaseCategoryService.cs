@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace EHospital.Diseases.BusinessLogic.Services
 {
-    public class DiseaseCategoryService : IDiseaseCategory
+    public class DiseaseCategoryService : IDiseaseCategoryService
     {
         IUniteOfWork _unitOfWork;
 

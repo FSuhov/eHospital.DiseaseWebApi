@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EHospital.Diseases.Model
 {
-    public class UserData : ISoftDeletable
+    public class UsersData : ISoftDeletable
     {
         [Key]
         public int UserId { get; set; }

@@ -9,7 +9,7 @@ namespace EHospital.Diseases.Model
 
         IRepository<PatientInfo> Patients { get; }
 
-        IRepository<UserData> Users { get; }
+        IRepository<UsersData> Users { get; }
 
         IRepository<DiseaseCategory> Categories { get; }
 
