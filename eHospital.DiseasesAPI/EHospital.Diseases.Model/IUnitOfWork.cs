@@ -3,6 +3,9 @@ using System.Threading.Tasks;
 
 namespace EHospital.Diseases.Model
 {
+    /// <summary>
+    /// Contains prototypes of properties and methods for UnitOfWork
+    /// </summary>
     public interface IUniteOfWork : IDisposable
     {
         IRepository<Disease> Diseases { get; }

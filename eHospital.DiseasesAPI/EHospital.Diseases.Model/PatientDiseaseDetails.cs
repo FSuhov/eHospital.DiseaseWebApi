@@ -5,11 +5,10 @@ using System.Text;
 namespace EHospital.Diseases.Model
 {
     /// <summary>
-    /// Represents a detailed View of PatientDisease of selected patient
-    /// with reference ID's replaced by Names (text values).
-    /// To be used in PatientDisease User Story 2.
+    /// Represents a extended User-Friendly View of specific PatientDisease entry of particular Patient
+    /// with reference ID's replaced by Names (text values)
     /// </summary>
-    public class PatientDiseaseInfo
+    public class PatientDiseaseDetails
     {
         /// <summary>
         /// Gets or Sets Unique integer identifier of entry
@@ -27,14 +26,24 @@ namespace EHospital.Diseases.Model
         public string CategoryName { get; set; }
 
         /// <summary>
+        /// Gets or Sets Description of Disease
+        /// </summary>
+        public string Description { get; set; }
+
+        /// <summary>
         /// Gets or Sets start date of Disease
         /// </summary>
         public DateTime StartDate { get; set; }
 
         /// <summary>
-        /// Gets Status of Disease, or Sets it evaluating the existing EndDate of PatientDisease entry
+        /// Gets or Sets end date of Disease
         /// </summary>
-        public bool IsCurrent { get; set; }
+        public DateTime? EndDate { get; set; }
+
+        /// <summary>
+        /// Gets or Sets Doctor's Note for this entry
+        /// </summary>
+        public string Notes { get; set; }
 
         /// <summary>
         /// Gets or Sets Doctor's LastName for this entry

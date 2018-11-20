@@ -63,6 +63,7 @@ namespace EHospital.Diseases.Data
 
         public T Delete(T entity)
         {
+            entity.IsDeleted = true;
             _entities.Attach(entity);
             _context.Entry(entity).State = EntityState.Modified;
 

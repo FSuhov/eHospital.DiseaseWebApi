@@ -13,10 +13,14 @@ namespace EHospital.Diseases.BusinessLogic.Contracts
 
         IQueryable<PatientDisease> GetPatientDiseasesByPatient(int patientId);
 
-        Task<PatientDisease> AddPatientDiseaseAsync(PatientDisease patientDisease);
+        Task<PatientDisease> AddPatientDiseaseAsync(PatientDisease patientDisease);        
 
-        Task<PatientDisease> UpdatePatientDiseaseAsync(int patientDiseaseId, PatientDisease patientDisease);
+        IEnumerable<PatientDiseaseInfo> GetPatientDiseasesInfos(int patientId);
 
-        IEnumerable<PatientDiseaseInfo> GetPatientDiseaseInfos(int patientId);
+        PatientDiseaseDetails GetPatientDiseaseDetailes(int patientDiseaseId);
+
+        Task<PatientDisease> UpdatePatientDiseaseAsync(int id, PatientDiseaseDetails patientDiseaseDetails);
+
+        Task DeletePatientDiseaseAsync(int id);
     }
 }

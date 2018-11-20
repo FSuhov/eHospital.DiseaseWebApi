@@ -6,6 +6,10 @@ using System.Text;
 
 namespace EHospital.Diseases.Model
 {
+    /// <summary>
+    /// Generic Interface to be implemented for separating data source
+    /// </summary>
+    /// <typeparam name="T">Data Type of Database Entry </typeparam>
     public interface IRepository<T> where T : ISoftDeletable
     {
         IQueryable<T> GetAll();

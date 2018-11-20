@@ -63,9 +63,14 @@ namespace EHospital.Diseases.BusinessLogic.Services
             return patientDiseaseUpdated;
         }
 
-        public IEnumerable<PatientDiseaseInfo> GetPatientDiseaseInfos(int patientId)
+        /// <summary>
+        /// Collects data from 4 tables in DB and combines it to 
+        /// the list of diseases of selected patient with detailed information
+        /// </summary>
+        /// <param name="patientId">Id of patient to look for</param>
+        /// <returns>Collection of objects in PatientDiseaseInfo view</returns>
+        public IEnumerable<PatientDiseaseInfo> GetPatientDiseasesInfos(int patientId)
         {
-
             var infos = from pd in _unitOfWork.PatientDiseases.GetAll()
                         where pd.PatientId == patientId
                         join dis in _unitOfWork.Diseases.GetAll()
@@ -87,24 +92,70 @@ namespace EHospital.Diseases.BusinessLogic.Services
             return infos;
         } 
 
-
-        public DiseaseCategory GetCategory(int diseaseId)
+        /// <summary>
+        /// Looks for PatientDisease instance with specified ID,
+        /// selects related data for that instance from other tables 
+        /// </summary>
+        /// <param name="patientDiseaseId">Id of PatiendDisease instance to look for </param>
+        /// <returns> Readable Representation of PatientDisease with reference's Ids replaced with text Names </returns>
+        public PatientDiseaseDetails GetPatientDiseaseDetailes (int patientDiseaseId)
         {
-            var category = (from categories in _unitOfWork.Categories.GetAll()
-                            join diseases in _unitOfWork.Diseases.GetAll()
-                            on categories.CategoryId equals diseases.CategoryId
-                            select categories).First();
-            return category;
+            var diseaseDetails =  from pd in _unitOfWork.PatientDiseases.GetAll()
+                                  where pd.PatientDiseaseId == patientDiseaseId
+                                  from dis in _unitOfWork.Diseases.GetAll()
+                                  where dis.DiseaseId == pd.DiseaseId
+                                  from cat in _unitOfWork.DiseaseCategories.GetAll()
+                                  where cat.CategoryId == dis.CategoryId
+                                  from user in _unitOfWork.Users.GetAll()
+                                  where user.UserId == pd.UserId
+                                  select new PatientDiseaseDetails
+                                  {
+                                      Id = pd.PatientDiseaseId,
+                                      Name = dis.Name,
+                                      CategoryName = cat.Name,
+                                      Description = dis.Description,
+                                      StartDate = pd.StartDate,
+                                      EndDate = pd.EndDate,
+                                      Notes = pd.Note,
+                                      Doctor = user.LastName
+                                  };
+
+            return diseaseDetails.FirstOrDefault();
         }
 
-        public Disease GetDisease(int diseaseId)
+        /// <summary>
+        /// Updates some of PatientDisease instance properties: EndDate, Note, UserId (doctor)
+        /// </summary>
+        /// <param name="id">Id of PatientDisease instance to be updated </param>
+        /// <param name="patientDiseaseDetails">Readable representation of PatientDisease </param>
+        /// <returns>Updates instance of PatientDisease </returns>
+        public async Task<PatientDisease> UpdatePatientDiseaseAsync(int id, PatientDiseaseDetails patientDiseaseDetails)
         {
-            return _unitOfWork.Diseases.Get(diseaseId);
+            var patientDiseaseToUpdate = _unitOfWork.PatientDiseases.Get(id);
+            patientDiseaseToUpdate.EndDate = patientDiseaseDetails.EndDate;
+            patientDiseaseToUpdate.Note = patientDiseaseDetails.Notes;
+            patientDiseaseToUpdate.UserId = _unitOfWork.Users.GetAll().First(u => u.LastName == patientDiseaseDetails.Doctor).UserId;
+
+            await _unitOfWork.Save();
+            return patientDiseaseToUpdate;
         }
 
-        public UsersData GetDoctor(int userId)
+        /// <summary>
+        /// Sets PatientDisease instance's IsDeleted property to TRUE
+        /// Throws ArgumentNullException if no instance with such ID found
+        /// </summary>
+        /// <param name="id">Id of PatientDisease instance to be deleted</param>        
+        public async Task DeletePatientDiseaseAsync(int id)
         {
-            return _unitOfWork.Users.Get(userId);
+            var patientDiseaseToDelete = _unitOfWork.PatientDiseases.Get(id);
+
+            if (patientDiseaseToDelete == null)
+            {
+                throw new ArgumentNullException("No entry with such ID.");
+            }
+
+            _unitOfWork.PatientDiseases.Delete(patientDiseaseToDelete);
+            await _unitOfWork.Save();
         }
     }
 }

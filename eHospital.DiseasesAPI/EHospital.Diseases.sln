@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EHospital.Diseases.Business
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EHospital.Diseases.Data", "EHospital.Diseases.Data\EHospital.Diseases.Data.csproj", "{3E757CA8-F6A9-423F-A5B2-3304489F7505}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EHospital.Diseases.Model", "EHospital.Diseases.Model\EHospital.Diseases.Model.csproj", "{6054024D-556D-43B4-8339-CE2E55CBC65A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EHospital.Diseases.Model", "EHospital.Diseases.Model\EHospital.Diseases.Model.csproj", "{6054024D-556D-43B4-8339-CE2E55CBC65A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EHospital.Diseases.Tests", "EHospital.Diseases.Tests\EHospital.Diseases.Tests.csproj", "{3B3C662D-473B-4F83-BE97-DEEE3E96E49B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{6054024D-556D-43B4-8339-CE2E55CBC65A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6054024D-556D-43B4-8339-CE2E55CBC65A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6054024D-556D-43B4-8339-CE2E55CBC65A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B3C662D-473B-4F83-BE97-DEEE3E96E49B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B3C662D-473B-4F83-BE97-DEEE3E96E49B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B3C662D-473B-4F83-BE97-DEEE3E96E49B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B3C662D-473B-4F83-BE97-DEEE3E96E49B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

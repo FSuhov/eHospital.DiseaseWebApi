@@ -12,9 +12,11 @@ namespace EHospital.Diseases.WebAPI
     {
         public AutomapperProfileConfig()
         {
-            CreateMap<Disease, DiseaseView>();
-            CreateMap<DiseaseCategory, DiseaseCategoryView>();
+            CreateMap<Disease, DiseaseView>()
+                .ForMember(dest => dest.Id, src => src.MapFrom(opts => opts.DiseaseId));
 
+            CreateMap<DiseaseCategory, DiseaseCategoryView>();
+                
 
             // PatientDisease View Mapping
             /*
