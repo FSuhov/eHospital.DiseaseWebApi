@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using AutoMapper;
 using EHospital.Diseases.BusinessLogic.Contracts;
 using EHospital.Diseases.Model;
@@ -81,6 +82,7 @@ namespace EHospital.Diseases.WebAPI.Controllers
         }
 
         /// <summary>
+        /// Handles request POST /api/disease/[FROM BODY] Disease.
         /// Tries to add new Disease entry to Database
         /// </summary>
         /// <param name="disease">A new instance of Disease</param>
@@ -99,11 +101,11 @@ namespace EHospital.Diseases.WebAPI.Controllers
 
             try
             {
-                _service.AddDiseaseAsync(disease);
+                var addedDisease = _service.AddDiseaseAsync(disease);
 
                 log.Info($"DiseaseController::AddDisease. Disease {disease.Name} added.");
 
-                return Created("disease/", disease.Id);
+                return Created("disease/", addedDisease.Id);
             }
             catch (ArgumentException ex)
             {
@@ -111,6 +113,33 @@ namespace EHospital.Diseases.WebAPI.Controllers
 
                 return BadRequest(ex.Message);
             };
+        }
+
+        /// <summary>
+        /// Handles request DELETE /api/disease/2.
+        /// Tries to delete Disease with specified id (set IsDeleted to true).
+        /// </summary>
+        /// <param name="id">Id of Disease to delete</param>
+        /// <returns>Ok or NotFound</returns>
+        [HttpDelete]
+        public async Task<IActionResult> DeleteDisease(int id)
+        {
+            log.Info($"DiseaseController::DeleteDisease. Deleting Disease with ID {id}.");
+
+            try
+            {
+                var diseaseToDelete = await _service.DeleteDiseaseAsync(id);
+
+                log.Info($"DiseaseController::DeleteDisease. Deleted Disease with ID {id}.");
+
+                return Ok(diseaseToDelete.Id);
+            }
+            catch (ArgumentException ex)
+            {
+                log.Error($"DiseaseController::DeleteDisease.Failed to delete because no disease with {id} found.");
+
+                return NotFound(ex.Message);
+            }
         }
     }
 }

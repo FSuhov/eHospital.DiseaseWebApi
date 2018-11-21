@@ -32,11 +32,11 @@ namespace EHospital.Diseases.WebAPI
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {
-           
+        {           
             services.AddDbContext<DiseaseDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("EHospitalDatabase")));
-            
+
             Mapper.Initialize(cfg => cfg.AddProfile<AutomapperProfileConfig>());
+            services.AddScoped<IUniteOfWork, UnitOfWork>();
 
             services.AddScoped<IRepository<Disease>, Repository<Disease>>();
             services.AddScoped<IRepository<DiseaseCategory>, Repository<DiseaseCategory>>();
@@ -47,7 +47,7 @@ namespace EHospital.Diseases.WebAPI
             services.AddScoped<IDiseaseCategoryService, DiseaseCategoryService>();
             
             services.AddScoped<IPatientDiseaseService, PatientDiseaseService>();
-            services.AddSingleton<IUniteOfWork, UnitOfWork>();
+           
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             log.Info("Using Disease API");

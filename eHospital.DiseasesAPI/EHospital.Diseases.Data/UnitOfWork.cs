@@ -10,7 +10,7 @@ namespace EHospital.Diseases.Data
 {
     public class UnitOfWork : IUniteOfWork
     {
-        private DiseaseDBContext _context = new DiseaseDBContext();
+        private static DiseaseDBContext _context;
 
         private Repository<Disease> _diseases;
         private Repository<PatientInfo> _patients;
@@ -20,6 +20,11 @@ namespace EHospital.Diseases.Data
         private Repository<PatientDisease> _patientDiseases;
 
         private bool disposed = false;
+
+        public UnitOfWork(DiseaseDBContext context)
+        {
+            _context = context;
+        }
 
         public IRepository<Disease> Diseases
         {
@@ -102,7 +107,7 @@ namespace EHospital.Diseases.Data
         public void CascadeDeletePatientDisease(int id)
         {
             var procId = new SqlParameter("@Id", id);
-            _context.Database.ExecuteSqlCommand("CascadeDeletePatientAllergy @Id", parameters: procId);
+            _context.Database.ExecuteSqlCommand("CascadeDeletePatientDisease @Id", parameters: procId);
         }
 
         public async Task Save()

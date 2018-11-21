@@ -77,7 +77,8 @@ namespace EHospital.Diseases.BusinessLogic.Services
         /// <summary>
         /// Sets IsDisabled property of Disease instance to true 
         /// Throws exception if not found.
-        /// Throws exception if there are other records connected to this disease in the PatientDisease table
+        /// Calls cascade delete procedure that sets IsDeleted to true for all entries in 
+        /// PatientDiseases table where this Disease has been found.
         /// </summary>
         /// <param name="diseaseId">Disease object that has been disabled</param>
         public async Task<Disease> DeleteDiseaseAsync(int diseaseId)
@@ -86,14 +87,14 @@ namespace EHospital.Diseases.BusinessLogic.Services
 
             if (diseaseToDelete == null)
             {
-                throw new ArgumentNullException("No disease found.");
+                throw new ArgumentException("No disease found.");
             }
 
             if (_unitOfWork.PatientDiseases.GetAll().Count() != 0)
             {
                 if (_unitOfWork.PatientDiseases.GetAll().Any(d => d.DiseaseId == diseaseToDelete.Id))
                 {
-                    throw new InvalidOperationException("There are existing records containing this Disease.");
+                    _unitOfWork.CascadeDeletePatientDisease(diseaseId);
                 }
             }
 
