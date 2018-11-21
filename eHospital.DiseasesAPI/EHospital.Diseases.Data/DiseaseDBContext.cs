@@ -28,7 +28,7 @@ namespace EHospital.Diseases.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(@"Server=DESKTOP-PU90CNF;Database=EHospitalDB;Trusted_Connection=True;ConnectRetryCount=0");
+                optionsBuilder.UseSqlServer(@"Server=DESKTOP-PU90CNF;Database=EHospitalDB;Trusted_Connection=True;ConnectRetryCount=0");                
             }
         }
     }

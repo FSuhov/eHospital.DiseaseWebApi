@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using log4net;
+using System.Reflection;
+using log4net.Config;
+using System.IO;
 
 namespace EHospital.Diseases.WebAPI
 {
@@ -14,6 +11,8 @@ namespace EHospital.Diseases.WebAPI
     {
         public static void Main(string[] args)
         {
+            var logRepo = LogManager.GetRepository(Assembly.GetEntryAssembly());
+            XmlConfigurator.Configure(logRepo, new FileInfo("log4net.config"));
             CreateWebHostBuilder(args).Build().Run();
         }
 

@@ -21,6 +21,8 @@ namespace EHospital.Diseases.WebAPI
 {
     public class Startup
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -31,8 +33,9 @@ namespace EHospital.Diseases.WebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string connection = @"Server=DESKTOP-PU90CNF;Database=EHospitalDB;Trusted_Connection=True;ConnectRetryCount=0";
-            services.AddDbContext<DiseaseDBContext>(options => options.UseSqlServer(connection));
+           
+            services.AddDbContext<DiseaseDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("EHospitalDatabase")));
+            
             Mapper.Initialize(cfg => cfg.AddProfile<AutomapperProfileConfig>());
 
             services.AddScoped<IRepository<Disease>, Repository<Disease>>();
@@ -46,7 +49,9 @@ namespace EHospital.Diseases.WebAPI
             services.AddScoped<IPatientDiseaseService, PatientDiseaseService>();
             services.AddSingleton<IUniteOfWork, UnitOfWork>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-                       
+
+            log.Info("Using Disease API");
+            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info

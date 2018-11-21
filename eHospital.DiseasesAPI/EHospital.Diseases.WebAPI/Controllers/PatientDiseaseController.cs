@@ -11,12 +11,19 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EHospital.Diseases.WebAPI.Controllers
 {
+    /// <summary>
+    /// Represents class containing methods for handling user requests
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class PatientDiseaseController : ControllerBase
     {
-        IPatientDiseaseService _service;
+        private readonly IPatientDiseaseService _service;
 
+        /// <summary>
+        /// Initializes new instance of PatientDiseaseController
+        /// </summary>
+        /// <param name="service">Instance of Business logic class</param>
         public PatientDiseaseController(IPatientDiseaseService service)
         {
             _service = service;

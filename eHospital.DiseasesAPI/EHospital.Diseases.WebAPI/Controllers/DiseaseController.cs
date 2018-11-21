@@ -1,72 +1,115 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using EHospital.Diseases.BusinessLogic.Contracts;
 using EHospital.Diseases.Model;
 using EHospital.Diseases.WebAPI.ViewModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EHospital.Diseases.WebAPI.Controllers
 {
+    /// <summary>
+    /// Represents class containing methods for handling user requests
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class DiseaseController : ControllerBase
     {
-        IDiseaseService _service;
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        private readonly IDiseaseService _service;
+
+        /// <summary>
+        /// Initializes new instance of PatientDiseaseController
+        /// </summary>
+        /// <param name="service">Instance of Business logic class</param>
         public DiseaseController(IDiseaseService service)
         {
             _service = service;
         }
 
+        /// <summary>
+        /// Handles request GET /api/disease/.
+        /// Retrieves all entries of diseases from database
+        /// </summary>
+        /// <returns>Ok with Collection of DiseaseView objects</returns>
         [HttpGet]
         public IActionResult GetAllDiseases()
         {
+            log.Info("DiseaseController::GetAllDiseases. Retrieving all entries of diseases.");
+
             var diseases = _service.GetAllDiseases();
 
             return Ok(Mapper.Map<IEnumerable<DiseaseView>>(diseases));
         }
 
+        /// <summary>
+        /// Handles request GET /api/disease/categoryid=2.
+        /// Retrieves all entries of diseases belonging to specified category from database
+        /// </summary>
+        /// <returns>OK with Collection of DiseaseView objects</returns>
         [HttpGet("categoryid={categoryId}")]
         public IActionResult GetDiseasesByCategory(int categoryId)
         {
+            log.Info($"DiseaseController::GetDiseasesByCategory. Retrieving all entries of diseases of Category {categoryId}.");
+
             var diseases = _service.GetDiseasedByCategory(categoryId);
 
             return Ok(Mapper.Map<IEnumerable<DiseaseView>>(diseases));
         }
 
+        /// <summary>
+        /// Handles request GET /api/disease/2.
+        /// Retrieves diseases entry with specified ID database
+        /// </summary>
+        /// <returns>OK with Disease object or NotFound</returns>
         [HttpGet("{diseaseId}")]
         public IActionResult GetDisease(int diseaseId)
         {
+            log.Info($"DiseaseController::GetDisease. Retrieving Disease with ID {diseaseId}.");
+
             var disease = _service.GetDiseaseById(diseaseId);
 
             if (disease == null)
             {
+                log.Warn($"DiseaseController::GetDisease. No records found with ID {diseaseId}.");
+
                 return NotFound();
             }
 
             return Ok(disease);
         }
 
+        /// <summary>
+        /// Tries to add new Disease entry to Database
+        /// </summary>
+        /// <param name="disease">A new instance of Disease</param>
+        /// <returns>Created (with Id) or BadRequest</returns>
         [HttpPost]
         public IActionResult AddDesease([FromBody]Disease disease)
         {
+            log.Info($"DiseaseController::AddDisease.Adding Disease {disease.Name}.");
+
             if (!ModelState.IsValid)
             {
+                log.Error($"DiseaseController::AddDisease. Invalid Model of Disease submitted.");
+
                 return BadRequest("Invalid data submitted");
             }
 
             try
             {
                 _service.AddDiseaseAsync(disease);
+
+                log.Info($"DiseaseController::AddDisease. Disease {disease.Name} added.");
+
                 return Created("disease/", disease.DiseaseId);
             }
             catch (ArgumentException ex)
             {
-                return BadRequest("Disease already exists");
+                log.Error($"DiseaseController::AddDisease. Disease {disease.Name} not added due to duplicated name.");
+
+                return BadRequest(ex.Message);
             };
         }
     }
