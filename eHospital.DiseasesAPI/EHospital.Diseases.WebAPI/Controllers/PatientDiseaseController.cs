@@ -114,7 +114,7 @@ namespace EHospital.Diseases.WebAPI.Controllers
                 var result = await _service.UpdatePatientDiseaseAsync(id, patientDiseaseDetails);
                 return Ok(result);
             }
-            catch(Exception ex)
+            catch(ArgumentException ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -134,7 +134,7 @@ namespace EHospital.Diseases.WebAPI.Controllers
                 await _service.DeletePatientDiseaseAsync(id);
                 return Ok();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentException ex)
             {
                 return NotFound(ex.Message);
             }

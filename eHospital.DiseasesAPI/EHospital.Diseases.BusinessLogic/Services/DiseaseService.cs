@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace EHospital.Diseases.BusinessLogic.Services
 {
     /// <summary>
-    /// Represents business logic for handling controller's requests
+    /// Represents business logic for handling Disease controller's requests
     /// </summary>
     public class DiseaseService : IDiseaseService
     {
@@ -38,9 +38,9 @@ namespace EHospital.Diseases.BusinessLogic.Services
         /// <returns> The collection of Diseases objects sorted alphabetically</returns>
         public IQueryable<Disease> GetDiseasedByCategory(int categoryId)
         {
-            var result = _unitOfWork.Diseases.GetAll().Where(d => d.CategoryId == categoryId);
+            var diseases = _unitOfWork.Diseases.GetAll().Where(d => d.CategoryId == categoryId);
 
-            return result.OrderBy(d => d.Name);
+            return diseases.OrderBy(d => d.Name);
         }
 
         /// <summary>
@@ -50,9 +50,9 @@ namespace EHospital.Diseases.BusinessLogic.Services
         /// <returns>Disease object with specified Id or NULL if not found</returns>
         public Disease GetDiseaseById(int diseaseId)
         {
-            var result = _unitOfWork.Diseases.Get(diseaseId);
+            var disease = _unitOfWork.Diseases.Get(diseaseId);
 
-            return result;
+            return disease;
         }
 
         /// <summary>
@@ -68,10 +68,10 @@ namespace EHospital.Diseases.BusinessLogic.Services
                 throw new ArgumentException("Disease already exists.");
             }
 
-            Disease result = _unitOfWork.Diseases.Insert(disease);
+            Disease diseaseInserted = _unitOfWork.Diseases.Insert(disease);
             await _unitOfWork.Save();
 
-            return result;
+            return diseaseInserted;
         }
 
         /// <summary>
@@ -82,26 +82,26 @@ namespace EHospital.Diseases.BusinessLogic.Services
         /// <param name="diseaseId">Disease object that has been disabled</param>
         public async Task<Disease> DeleteDiseaseAsync(int diseaseId)
         {
-            var result = _unitOfWork.Diseases.Get(diseaseId);
+            var diseaseToDelete = _unitOfWork.Diseases.Get(diseaseId);
 
-            if (result == null)
+            if (diseaseToDelete == null)
             {
                 throw new ArgumentNullException("No disease found.");
             }
 
             if (_unitOfWork.PatientDiseases.GetAll().Count() != 0)
             {
-                if (_unitOfWork.PatientDiseases.GetAll().Any(d => d.DiseaseId == result.DiseaseId))
+                if (_unitOfWork.PatientDiseases.GetAll().Any(d => d.DiseaseId == diseaseToDelete.DiseaseId))
                 {
                     throw new InvalidOperationException("There are existing records containing this Disease.");
                 }
             }
 
-            result.IsDeleted = true;
-            _unitOfWork.Diseases.Delete(result);
+            diseaseToDelete.IsDeleted = true;
+            _unitOfWork.Diseases.Delete(diseaseToDelete);
             await _unitOfWork.Save();
 
-            return result;
+            return diseaseToDelete;
         }
     }
 }

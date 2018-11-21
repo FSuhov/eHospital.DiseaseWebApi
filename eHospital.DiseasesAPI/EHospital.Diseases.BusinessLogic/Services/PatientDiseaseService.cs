@@ -8,15 +8,26 @@ using System.Linq;
 
 namespace EHospital.Diseases.BusinessLogic.Services
 {
+    /// <summary>
+    /// Represents business logic for handling PatientDisease controller's requests
+    /// </summary>
     public class PatientDiseaseService : IPatientDiseaseService
     {
         private readonly IUniteOfWork _unitOfWork;
 
+        /// <summary>
+        /// Initilializes new instance of DiseaseCategoryService class
+        /// </summary>
+        /// <param name="unitOfWork"> Concrete instance of UnitOfWork, injected in startup.cs </param>
         public PatientDiseaseService(IUniteOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
+        /// <summary>
+        /// Gets the collection of Disease entries related to Patient with specified Id.    
+        /// </summary>
+        /// <returns> The collection of Diseases objects sorted alphabetically</returns>
         public IQueryable<Disease> GetDiseaseByPatient(int patientId)
         {
             var diseasesOfPatient = from diseases in _unitOfWork.PatientDiseases.GetAll()
@@ -28,6 +39,10 @@ namespace EHospital.Diseases.BusinessLogic.Services
             return diseasesOfPatient.OrderBy(d => d.Name);
         }
 
+        /// <summary>
+        /// Gets the collection of PatientDisease entries related to Patient with specified Id.    
+        /// </summary>
+        /// <returns> The collection of PatientDisease objects</returns>
         public IQueryable<PatientDisease> GetPatientDiseasesByPatient(int patientId)
         {
             var patientDiseases = _unitOfWork.PatientDiseases.GetAll().Where(d => d.PatientId == patientId);
@@ -35,6 +50,11 @@ namespace EHospital.Diseases.BusinessLogic.Services
             return patientDiseases;
         }
 
+        /// <summary>
+        /// Gets PatientDisease entry with specified Id
+        /// </summary>
+        /// <param name="patientDiseaseId">Id of PatientDisease entry to look for</param>
+        /// <returns>PatientDisease object or NULL if not found</returns>
         public PatientDisease GetPatientDisease(int patientDiseaseId)
         {
             var patientDisease = _unitOfWork.PatientDiseases.Get(patientDiseaseId);
@@ -42,6 +62,11 @@ namespace EHospital.Diseases.BusinessLogic.Services
             return patientDisease;
         }
 
+        /// <summary>
+        /// Adds new PatientDisease entry to Database
+        /// </summary>
+        /// <param name="patientDisease">PatientDisease object to be added</param>
+        /// <returns>Added PatientDisease object</returns>
         public async Task<PatientDisease> AddPatientDiseaseAsync(PatientDisease patientDisease)
         {
             PatientDisease patientDiseaseInserted = _unitOfWork.PatientDiseases.Insert(patientDisease);
@@ -50,12 +75,19 @@ namespace EHospital.Diseases.BusinessLogic.Services
             return patientDiseaseInserted;
         }
 
+        /// <summary>
+        /// Updates existing PatientDisease entry in Database.
+        /// Throws exception in case entry to be updated not found.
+        /// </summary>
+        /// <param name="patientDiseaseId">Id of PatientDisease entry to be updated</param>
+        /// <param name="patientDisease">A sample PatientDisease object to be copied from</param>
+        /// <returns></returns>
         public async Task<PatientDisease> UpdatePatientDiseaseAsync(int patientDiseaseId, PatientDisease patientDisease)
         {
             var patientDiseaseUpdated = _unitOfWork.PatientDiseases.Get(patientDiseaseId);
             if (patientDiseaseUpdated == null)
             {
-                throw new ArgumentNullException("No such record");
+                throw new ArgumentException("No such record");
             }
 
             _unitOfWork.PatientDiseases.Update(patientDiseaseUpdated);
@@ -151,7 +183,7 @@ namespace EHospital.Diseases.BusinessLogic.Services
 
             if (patientDiseaseToDelete == null)
             {
-                throw new ArgumentNullException("No entry with such ID.");
+                throw new ArgumentException("No entry with such ID.");
             }
 
             _unitOfWork.PatientDiseases.Delete(patientDiseaseToDelete);
