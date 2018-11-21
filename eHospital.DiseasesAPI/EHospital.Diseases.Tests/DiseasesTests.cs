@@ -24,15 +24,15 @@ namespace EHospital.Diseases.Tests
             _mockData.Setup(s => s.Diseases).Returns(_mockRepo.Object);
             _diseasesList = new List<Disease>()
             {
-                new Disease(){DiseaseId = 1, CategoryId = 1, Name = "Test Disease Name 1", Description = "Test Disease Name 1 Description Text", IsDeleted = false},
-                new Disease(){DiseaseId = 2, CategoryId = 1, Name = "Test Disease Name 2", Description = "Test Disease Name 2 Description Text", IsDeleted = false},
-                new Disease(){DiseaseId = 3, CategoryId = 2, Name = "Test Disease Name 3", Description = "Test Disease Name 3 Description Text", IsDeleted = false}
+                new Disease(){Id = 1, CategoryId = 1, Name = "Test Disease Name 1", Description = "Test Disease Name 1 Description Text", IsDeleted = false},
+                new Disease(){Id = 2, CategoryId = 1, Name = "Test Disease Name 2", Description = "Test Disease Name 2 Description Text", IsDeleted = false},
+                new Disease(){Id = 3, CategoryId = 2, Name = "Test Disease Name 3", Description = "Test Disease Name 3 Description Text", IsDeleted = false}
             };
 
             _categoriesList = new List<DiseaseCategory>
             {
-                new DiseaseCategory(){CategoryId = 1, Name = "Test Category 1", IsDeleted = false},
-                new DiseaseCategory(){CategoryId = 2, Name = "Test Category 2", IsDeleted = false}
+                new DiseaseCategory(){Id = 1, Name = "Test Category 1", IsDeleted = false},
+                new DiseaseCategory(){Id = 2, Name = "Test Category 2", IsDeleted = false}
             };
             
         }
@@ -104,7 +104,7 @@ namespace EHospital.Diseases.Tests
         {
             // Arrange
             _mockData.Setup(q => q.Diseases.GetAll()).Returns(_diseasesList.AsQueryable);
-            Disease testDisease = new Disease() { DiseaseId = 4, CategoryId = 2, Name = "Test Disease Name 4", Description = "Test Disease Name 4 Description Text", IsDeleted = false };
+            Disease testDisease = new Disease() { Id = 4, CategoryId = 2, Name = "Test Disease Name 4", Description = "Test Disease Name 4 Description Text", IsDeleted = false };
             _mockData.Setup(q => q.Diseases.Insert(testDisease)).Returns(testDisease);
 
             // Act
@@ -120,7 +120,7 @@ namespace EHospital.Diseases.Tests
         {
             // Arrange 
             _mockData.Setup(q => q.Diseases.GetAll()).Returns(_diseasesList.AsQueryable);
-            Disease testDisease = new Disease() { DiseaseId = 3, CategoryId = 2, Name = "Test Disease Name 3", Description = "Test Disease Name 3 Description Text", IsDeleted = false };
+            Disease testDisease = new Disease() { Id = 3, CategoryId = 2, Name = "Test Disease Name 3", Description = "Test Disease Name 3 Description Text", IsDeleted = false };
             _mockData.Setup(q => q.Diseases.Insert(testDisease)).Returns(testDisease);            
 
             // Assert

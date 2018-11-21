@@ -27,35 +27,35 @@ namespace EHospital.Diseases.Tests
             _mockData.Setup(s => s.Diseases).Returns(_mockRepo.Object);
             _diseasesList = new List<Disease>()
             {
-                new Disease(){DiseaseId = 1, CategoryId = 1, Name = "Test Disease Name 1", Description = "Test Disease Name 1 Description Text", IsDeleted = false},
-                new Disease(){DiseaseId = 2, CategoryId = 1, Name = "Test Disease Name 2", Description = "Test Disease Name 2 Description Text", IsDeleted = false},
-                new Disease(){DiseaseId = 3, CategoryId = 2, Name = "Test Disease Name 3", Description = "Test Disease Name 3 Description Text", IsDeleted = false}
+                new Disease(){Id = 1, CategoryId = 1, Name = "Test Disease Name 1", Description = "Test Disease Name 1 Description Text", IsDeleted = false},
+                new Disease(){Id = 2, CategoryId = 1, Name = "Test Disease Name 2", Description = "Test Disease Name 2 Description Text", IsDeleted = false},
+                new Disease(){Id = 3, CategoryId = 2, Name = "Test Disease Name 3", Description = "Test Disease Name 3 Description Text", IsDeleted = false}
             };
 
             _categoriesList = new List<DiseaseCategory>
             {
-                new DiseaseCategory(){CategoryId = 1, Name = "Test Category 1", IsDeleted = false},
-                new DiseaseCategory(){CategoryId = 2, Name = "Test Category 2", IsDeleted = false}
+                new DiseaseCategory(){Id = 1, Name = "Test Category 1", IsDeleted = false},
+                new DiseaseCategory(){Id = 2, Name = "Test Category 2", IsDeleted = false}
             };
 
             _patientsList = new List<PatientInfo>
             {
-                new PatientInfo(){PatientId = 1, BirthDate = new DateTime(1970,12,1), FirstName = "Vasya", LastName = "Pupkin", Gender = 1, Email = "test@gmail.com", IsDeleted = false},
-                new PatientInfo(){PatientId = 2, BirthDate = new DateTime(1960,12,1), FirstName = "James", LastName = "Bond", Gender = 1, Email = "test1@gmail.com", IsDeleted = false},
-                new PatientInfo(){PatientId = 3, BirthDate = new DateTime(1990,12,1), FirstName = "John", LastName = "Snown", Gender = 1, Email = "test2@gmail.com", IsDeleted = false},
+                new PatientInfo(){Id = 1, BirthDate = new DateTime(1970,12,1), FirstName = "Vasya", LastName = "Pupkin", Gender = 1, Email = "test@gmail.com", IsDeleted = false},
+                new PatientInfo(){Id = 2, BirthDate = new DateTime(1960,12,1), FirstName = "James", LastName = "Bond", Gender = 1, Email = "test1@gmail.com", IsDeleted = false},
+                new PatientInfo(){Id = 3, BirthDate = new DateTime(1990,12,1), FirstName = "John", LastName = "Snown", Gender = 1, Email = "test2@gmail.com", IsDeleted = false},
             };
 
             _usersList = new List<UsersData>
             {
-                new UsersData(){UserId = 1, FirstName = "Sarah", LastName = "Connor", Email = "email@me.ru", Gender = 2, BirthDate = new DateTime(1970,12,1), IsDeleted = false},
-                new UsersData(){UserId = 2, FirstName = "Piter", LastName = "Ustinov", Email = "email1@me.ru", Gender = 1, BirthDate = new DateTime(1970,12,1), IsDeleted = false},
+                new UsersData(){Id = 1, FirstName = "Sarah", LastName = "Connor", Email = "email@me.ru", Gender = 2, BirthDate = new DateTime(1970,12,1), IsDeleted = false},
+                new UsersData(){Id = 2, FirstName = "Piter", LastName = "Ustinov", Email = "email1@me.ru", Gender = 1, BirthDate = new DateTime(1970,12,1), IsDeleted = false},
             };
 
             _patientDiseasesList = new List<PatientDisease>()
             {
-                new PatientDisease(){PatientDiseaseId = 1, DiseaseId = 1, UserId = 1, StartDate = new DateTime(2018,11,1), EndDate = null, Note = "Expecting analysis results", PatientId = 1, IsDeleted = false},
-                new PatientDisease(){PatientDiseaseId = 2, DiseaseId = 2, UserId = 2, StartDate = new DateTime(2018,11,10), EndDate = new DateTime(2018,11,14), Note = "Strong headache", PatientId = 2, IsDeleted = false},
-                new PatientDisease(){PatientDiseaseId = 3, DiseaseId = 3, UserId = 2, StartDate = new DateTime(2018,11,2), EndDate = null, Note = "Passing medication course", PatientId = 2, IsDeleted = false},
+                new PatientDisease(){Id = 1, DiseaseId = 1, UserId = 1, StartDate = new DateTime(2018,11,1), EndDate = null, Note = "Expecting analysis results", PatientId = 1, IsDeleted = false},
+                new PatientDisease(){Id = 2, DiseaseId = 2, UserId = 2, StartDate = new DateTime(2018,11,10), EndDate = new DateTime(2018,11,14), Note = "Strong headache", PatientId = 2, IsDeleted = false},
+                new PatientDisease(){Id = 3, DiseaseId = 3, UserId = 2, StartDate = new DateTime(2018,11,2), EndDate = null, Note = "Passing medication course", PatientId = 2, IsDeleted = false},
             };
         }
 

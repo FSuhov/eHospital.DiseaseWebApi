@@ -11,7 +11,7 @@ namespace EHospital.Diseases.Model
         /// Gets or Sets Unique integer identifier of entry
         /// </summary>
         [Key]
-        public int DiseaseId { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Gets or Sets Name of Disease

@@ -54,7 +54,7 @@ namespace EHospital.Diseases.WebAPI.Controllers
             try
             {
                 _service.AddDiseaseCategoryAsync(diseaseCategory);
-                return Created("diseasecategory/", diseaseCategory.CategoryId);
+                return Created("diseasecategory/", diseaseCategory.Id);
             }
             catch (ArgumentException ex)
             {

@@ -13,28 +13,9 @@ namespace EHospital.Diseases.WebAPI
         public AutomapperProfileConfig()
         {
             CreateMap<Disease, DiseaseView>()
-                .ForMember(dest => dest.Id, src => src.MapFrom(opts => opts.DiseaseId));
+                .ForMember(dest => dest.Id, src => src.MapFrom(opts => opts.Id));
 
             CreateMap<DiseaseCategory, DiseaseCategoryView>();
-                
-
-            // PatientDisease View Mapping
-            /*
-            CreateMap<PatientDisease, PatientDiseaseView>()
-                .ForMember(dest => dest.Id, src => src.MapFrom(opts => opts.PatientDiseaseId))
-                .ForMember(dest => dest.IsCurrent, src => src.MapFrom(opts => opts.EndDate < DateTime.Now));
-
-            CreateMap<DiseaseCategory, PatientDiseaseView>()
-                .ForMember(dest => dest.CategoryName, src => src.MapFrom(opts => opts.Name));
-
-            CreateMap<Disease, PatientDiseaseView>()
-                .ForMember(dest => dest.Name, src => src.MapFrom(opts => opts.Name));
-
-            CreateMap<UsersData, PatientDiseaseView>()
-                .ForMember(dest => dest.Doctor, src => src.MapFrom(opts => opts.LastName));
-             */
-            // End patientDisease View
-
         }
     }
 }

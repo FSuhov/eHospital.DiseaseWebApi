@@ -12,7 +12,7 @@ namespace EHospital.Diseases.Model
         /// Gets or Sets Unique integer identifier of entry
         /// </summary>
         [Key]
-        public int PatientDiseaseId { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Gets or Sets a Reference Id for Patient - Foreign Key

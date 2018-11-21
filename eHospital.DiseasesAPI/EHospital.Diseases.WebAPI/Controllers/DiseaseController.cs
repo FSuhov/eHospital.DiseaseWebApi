@@ -103,7 +103,7 @@ namespace EHospital.Diseases.WebAPI.Controllers
 
                 log.Info($"DiseaseController::AddDisease. Disease {disease.Name} added.");
 
-                return Created("disease/", disease.DiseaseId);
+                return Created("disease/", disease.Id);
             }
             catch (ArgumentException ex)
             {

@@ -33,7 +33,7 @@ namespace EHospital.Diseases.BusinessLogic.Services
             var diseasesOfPatient = from diseases in _unitOfWork.PatientDiseases.GetAll()
                                     where diseases.PatientId == patientId
                                     join disease in _unitOfWork.Diseases.GetAll()
-                                    on diseases.DiseaseId equals disease.DiseaseId
+                                    on diseases.DiseaseId equals disease.Id
                                     select disease;
 
             return diseasesOfPatient.OrderBy(d => d.Name);
@@ -106,14 +106,14 @@ namespace EHospital.Diseases.BusinessLogic.Services
             var infos = from pd in _unitOfWork.PatientDiseases.GetAll()
                         where pd.PatientId == patientId
                         join dis in _unitOfWork.Diseases.GetAll()
-                        on pd.DiseaseId equals dis.DiseaseId
+                        on pd.DiseaseId equals dis.Id
                         join cat in _unitOfWork.Categories.GetAll()
-                        on dis.CategoryId equals cat.CategoryId
+                        on dis.CategoryId equals cat.Id
                         join user in _unitOfWork.Users.GetAll()
-                        on pd.UserId equals user.UserId
+                        on pd.UserId equals user.Id
                         select new PatientDiseaseInfo
                         {
-                            Id = pd.PatientDiseaseId,
+                            Id = pd.Id,
                             Name = dis.Name,
                             StartDate = pd.StartDate,
                             IsCurrent = (pd.EndDate == null),
@@ -133,16 +133,16 @@ namespace EHospital.Diseases.BusinessLogic.Services
         public PatientDiseaseDetails GetPatientDiseaseDetailes (int patientDiseaseId)
         {
             var diseaseDetails =  from pd in _unitOfWork.PatientDiseases.GetAll()
-                                  where pd.PatientDiseaseId == patientDiseaseId
+                                  where pd.Id == patientDiseaseId
                                   from dis in _unitOfWork.Diseases.GetAll()
-                                  where dis.DiseaseId == pd.DiseaseId
+                                  where dis.Id == pd.DiseaseId
                                   from cat in _unitOfWork.DiseaseCategories.GetAll()
-                                  where cat.CategoryId == dis.CategoryId
+                                  where cat.Id == dis.CategoryId
                                   from user in _unitOfWork.Users.GetAll()
-                                  where user.UserId == pd.UserId
+                                  where user.Id == pd.UserId
                                   select new PatientDiseaseDetails
                                   {
-                                      Id = pd.PatientDiseaseId,
+                                      Id = pd.Id,
                                       Name = dis.Name,
                                       CategoryName = cat.Name,
                                       Description = dis.Description,
@@ -166,7 +166,7 @@ namespace EHospital.Diseases.BusinessLogic.Services
             var patientDiseaseToUpdate = _unitOfWork.PatientDiseases.Get(id);
             patientDiseaseToUpdate.EndDate = patientDiseaseDetails.EndDate;
             patientDiseaseToUpdate.Note = patientDiseaseDetails.Notes;
-            patientDiseaseToUpdate.UserId = _unitOfWork.Users.GetAll().First(u => u.LastName == patientDiseaseDetails.Doctor).UserId;
+            patientDiseaseToUpdate.UserId = _unitOfWork.Users.GetAll().First(u => u.LastName == patientDiseaseDetails.Doctor).Id;
 
             await _unitOfWork.Save();
             return patientDiseaseToUpdate;

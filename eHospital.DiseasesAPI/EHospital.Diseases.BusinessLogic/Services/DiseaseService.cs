@@ -91,7 +91,7 @@ namespace EHospital.Diseases.BusinessLogic.Services
 
             if (_unitOfWork.PatientDiseases.GetAll().Count() != 0)
             {
-                if (_unitOfWork.PatientDiseases.GetAll().Any(d => d.DiseaseId == diseaseToDelete.DiseaseId))
+                if (_unitOfWork.PatientDiseases.GetAll().Any(d => d.DiseaseId == diseaseToDelete.Id))
                 {
                     throw new InvalidOperationException("There are existing records containing this Disease.");
                 }
