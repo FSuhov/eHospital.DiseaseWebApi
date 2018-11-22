@@ -53,6 +53,7 @@ The project implements the following features:
 - Swagger;
 - Automapper;
 - Repositoty and Unit-Of-Work;
+- Logger;
 - 3-Tier Layered architecture: DataAccess, BusinessLogic, API.
 
 Enjoy!
