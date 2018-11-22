@@ -19,7 +19,7 @@ It contains controllers, business logic and tests for handling Http requests:
 - POST /api/patientdisease/[FROM BODY patientDisease] == Adds new PatientDisease entry
 - PUT /api/patientdisease/id?={}id + [FROM BODY patientDiseaseDetails] == Updates existing PatientDisease entry
 - DELETE /api/patientdisease/2 == Sets IsDeleted to TRUE for specific PatientDisease
-=====================================================================================
+=========================================================================
 User stories to be matched:
 1. Disease
 1.1. As a doctor/nurse/admin I want to get list of all diseases
@@ -46,7 +46,7 @@ Deleting patient`s disease
 Updating patient`s disease
 3.6. As a doctor/admin I want to update End Date, Doctor`s notes, Doctor`s Name in extended description
 of patient`s disease
-====================================================================================
+=========================================================================
 
 The project implements the following features:
 - Swagger;
