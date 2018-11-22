@@ -20,6 +20,7 @@ It contains controllers, business logic and tests for handling Http requests:
 - PUT /api/patientdisease/id?={}id + [FROM BODY patientDiseaseDetails] == Updates existing PatientDisease entry
 - DELETE /api/patientdisease/2 == Sets IsDeleted to TRUE for specific PatientDisease
 =========================================================================
+
 User stories to be matched:
 1. Disease
 1.1. As a doctor/nurse/admin I want to get list of all diseases
