@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using EHospital.Diseases.BusinessLogic.Contracts;
 using EHospital.Diseases.Model;
 using EHospital.Diseases.WebAPI.ViewModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EHospital.Diseases.WebAPI.Controllers
@@ -18,6 +16,8 @@ namespace EHospital.Diseases.WebAPI.Controllers
     [ApiController]
     public class PatientDiseaseController : ControllerBase
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly IPatientDiseaseService _service;
 
         /// <summary>
@@ -34,42 +34,50 @@ namespace EHospital.Diseases.WebAPI.Controllers
         /// Returns list of diseases of this patient in simple view: id of disease + name of disease
         /// </summary>
         /// <param name="patientId">Id of patient to look for</param>
-        /// <returns></returns>
+        /// <returns>Ok with Collection of DiseaseViews</returns>
         [HttpGet("names/{patientId}")]
-        public IActionResult GetDiseasesOfPatient(int patientId)
+        public IActionResult GetDiseasesByPatient(int patientId)
         {
+            log.Info($"PatiendDiseaseController::GetDiseasesOfPatient(). Retrieving entries for patient {patientId}.");
+
             var diseases = _service.GetDiseaseByPatient(patientId);
 
-            return Ok(Mapper.Map<IEnumerable<DiseaseView>>(diseases));           
+            return Ok(Mapper.Map<IEnumerable<DiseaseView>>(diseases));
         }
 
         /// <summary>
         /// Handles request GET /api/patientdisease/2
         /// Returns list of disease of selected patient in detaled view
         /// </summary>
-        /// <param name="patientId"></param>
-        /// <returns></returns>
+        /// <param name="patientId">ID of patient to look for</param>
+        /// <returns>Ok with collection of PatientDiseaseInfo</returns>
         [HttpGet("patientid={patientId}")]
-        public IActionResult GetDiseasesOfPatientDetailed(int patientId)
+        public IActionResult GetDiseasesByPatientDetailed(int patientId)
         {
-            var patientDiseases = _service.GetPatientDiseasesInfos(patientId);           
+            log.Info($"PatiendDiseaseController::GetDiseasesOfPatientDetailed(). Retrieving entries for patient {patientId}.");
+
+            var patientDiseases = _service.GetPatientDiseasesInfos(patientId);
 
             return Ok(patientDiseases);
         }
 
         /// <summary>
-        /// Handles request GET /api/patientdisease/2
-        /// Returns list of disease of selected patient in detaled view
+        /// Handles request GET /api/patientdisease/patientdisease=2
+        /// Returns detailed view of specific PatientDisease
         /// </summary>
-        /// <param name="patientId"></param>
-        /// <returns></returns>
+        /// <param name="patientDiseaseId">Id of PatientDisease entry</param>
+        /// <returns>Ok with PatientDiseaseDetails or NotFound</returns>
         [HttpGet("patientDiseaseId={patientDiseaseId}")]
-        public IActionResult GetDiseaseOfPatientDetailed(int patientDiseaseId)
+        public IActionResult GetPatientDisease(int patientDiseaseId)
         {
+            log.Info($"PatiendDiseaseController::GetPatientDisease(). Retrieving entries for patient {patientDiseaseId}.");
+
             var patientDisease = _service.GetPatientDiseaseDetailes(patientDiseaseId);
 
             if (patientDisease == null)
             {
+                log.Warn($"Entry with Id {patientDiseaseId} has not been found.");
+
                 return NotFound();
             }
 
@@ -81,24 +89,22 @@ namespace EHospital.Diseases.WebAPI.Controllers
         /// Adds new PatientDisease to the database
         /// </summary>
         /// <param name="patientDisease">Instance of PatientDisease to be added</param>
-        /// <returns>Updated instance of PatientDisease or BadRequest </returns>
+        /// <returns>Created with Added instance of PatientDisease or BadRequest </returns>
         [HttpPost]
         public async Task<IActionResult> AddPatientDisease([FromBody]PatientDisease patientDisease)
         {
+            log.Info("PatiendDiseaseController::AddPatientDisease(). Adding new PatietDisease.");
+
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            try
-            {
-                var result = await _service.AddPatientDiseaseAsync(patientDisease);
-                return Created("patientdisease", result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var result = await _service.AddPatientDiseaseAsync(patientDisease);
+
+            log.Info($"PatiendDiseaseController::AddPatientDisease(). Disease with ID {patientDisease.Id} added.");
+
+            return Created("patientdisease", result);
         }
 
         /// <summary>
@@ -111,18 +117,27 @@ namespace EHospital.Diseases.WebAPI.Controllers
         [HttpPut("id={id}", Name = "UpdatePatientDisease")]
         public async Task<IActionResult> UpdatePatientDisease(int id, [FromBody]PatientDiseaseDetails patientDiseaseDetails)
         {
+            log.Info($"PatiendDiseaseController::UpdatePatientDisease(). Updating PatientDisease with ID {id}.");
+
             if (!ModelState.IsValid)
             {
+                log.Error("PatiendDiseaseController::UpdatePatientDisease(). Model is not valid");
+
                 return BadRequest();
             }
 
             try
             {
                 var result = await _service.UpdatePatientDiseaseAsync(id, patientDiseaseDetails);
+
+                log.Info($"PatiendDiseaseController::UpdatePatientDisease(). Updated PatientDisease with ID {id}.");
+
                 return Ok(result);
             }
-            catch(ArgumentException ex)
+            catch (ArgumentException ex)
             {
+                log.Error($"PatiendDiseaseController::UpdatePatientDisease(). No records found with ID {id}");
+
                 return BadRequest(ex.Message);
             }
         }
@@ -136,16 +151,22 @@ namespace EHospital.Diseases.WebAPI.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeletePatientDisease(int id)
         {
+            log.Info($"PatiendDiseaseController::UpdatePatientDisease().Deleting PatientDisease with ID {id}.");
+
             try
             {
                 await _service.DeletePatientDiseaseAsync(id);
+
+                log.Info($"PatiendDiseaseController::UpdatePatientDisease(). PatientDisease with ID {id} has been deleted.");
+
                 return Ok();
             }
             catch (ArgumentException ex)
             {
+                log.Error($"PatiendDiseaseController::UpdatePatientDisease(). No records found with ID {id}");
+
                 return NotFound(ex.Message);
             }
         }
-
     }
 }

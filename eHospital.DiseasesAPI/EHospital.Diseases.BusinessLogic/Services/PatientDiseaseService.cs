@@ -1,10 +1,9 @@
-﻿using EHospital.Diseases.BusinessLogic.Contracts;
-using EHospital.Diseases.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
+using EHospital.Diseases.BusinessLogic.Contracts;
+using EHospital.Diseases.Model;
 
 namespace EHospital.Diseases.BusinessLogic.Services
 {

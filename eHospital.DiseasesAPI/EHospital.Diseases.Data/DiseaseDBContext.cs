@@ -1,7 +1,6 @@
 ﻿using EHospital.Diseases.Model;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace EHospital.Diseases.Data
 {
     public class DiseaseDBContext : DbContext

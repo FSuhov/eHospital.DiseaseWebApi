@@ -1,10 +1,8 @@
-﻿using EHospital.Diseases.Model;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Data.SqlClient;
-using System.Text;
 using System.Threading.Tasks;
+using EHospital.Diseases.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace EHospital.Diseases.Data
 {
