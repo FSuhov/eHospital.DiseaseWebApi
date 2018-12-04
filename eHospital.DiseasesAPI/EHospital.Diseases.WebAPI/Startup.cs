@@ -16,6 +16,7 @@ using EHospital.Diseases.BusinessLogic.Contracts;
 using EHospital.Diseases.BusinessLogic.Services;
 using EHospital.Diseases.Model;
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc.Cors.Internal;
 
 namespace EHospital.Diseases.WebAPI
 {
@@ -51,7 +52,7 @@ namespace EHospital.Diseases.WebAPI
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             log.Info("Using Disease API");
-            
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info
@@ -62,7 +63,20 @@ namespace EHospital.Diseases.WebAPI
                     TermsOfService = "Welcome everybody!",
                     Contact = new Swashbuckle.AspNetCore.Swagger.Contact() { Name = "Alex Brylov", Email = "aksu@ukr.net" }
                 });
+            });
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
+
+            services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.Add(new CorsAuthorizationFilterFactory("CorsPolicy"));
             });
         }
 
@@ -78,12 +92,14 @@ namespace EHospital.Diseases.WebAPI
                 app.UseHsts();
             }
 
+            app.UseCors("CorsPolicy");
+
             app.UseHttpsRedirection();
             app.UseMvc();
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "eHospital");
+                c.SwaggerEndpoint("../swagger/v1/swagger.json", "eHospital");
             });
         }
     }
