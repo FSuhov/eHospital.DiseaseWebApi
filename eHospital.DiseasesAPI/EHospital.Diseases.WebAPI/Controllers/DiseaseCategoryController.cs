@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using AutoMapper;
 using EHospital.Diseases.BusinessLogic.Contracts;
 using EHospital.Diseases.Model;
 using EHospital.Diseases.WebAPI.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders;
 
 namespace EHospital.Diseases.WebAPI.Controllers
 {
@@ -34,13 +36,14 @@ namespace EHospital.Diseases.WebAPI.Controllers
         /// </summary>
         /// <returns>Ok with Collection of DiseaseCategoryView objects</returns>
         [HttpGet]
-        public IActionResult GetAllCategories()
+        public async Task<IActionResult> GetAllCategories()
         {
             log.Info("DiseaseCategoryController::GetAllCategories. Retrieving all entries of DiseaseCategories.");
 
-            var diseaseCateories = _service.GetDiseaseCategories();
-
-            return Ok(Mapper.Map<IEnumerable<DiseaseCategoryView>>(diseaseCateories));
+            var diseaseCategories = await _service.GetDiseaseCategories();
+            var diseaseCategoriesViews = Mapper.Map<IEnumerable<DiseaseCategoryView>>(diseaseCategories);
+            
+            return Ok(diseaseCategoriesViews);
         }
 
         /// <summary>
@@ -50,20 +53,26 @@ namespace EHospital.Diseases.WebAPI.Controllers
         /// <param name="categoryId">An ID to look for</param>
         /// <returns>Ok with instance of DiseaseCategory or NotFound</returns>
         [HttpGet("{categoryId}")]
-        public IActionResult GetDiseaseCategory(int categoryId)
+        public async Task<IActionResult> GetDiseaseCategory(int categoryId)
         {
             log.Info($"DiseaseCategoryController::GetDiseaseCategory(). Retrieving DiseaseCategory with ID {categoryId}.");
 
-            var diseaseCategory = _service.GetDiseaseCategoryById(categoryId);
+            try
+            {
+                var diseaseCategory = await _service.GetDiseaseCategoryById(categoryId);
 
-            if (diseaseCategory == null)
+                return Ok(diseaseCategory);
+            }
+            catch (NullReferenceException)
             {
                 log.Warn($"DiseaseCategoryController::GetDiseaseCategory(). No records found with ID {categoryId}.");
 
-                return NotFound();
+                return NotFound(categoryId);
             }
-
-            return Ok(diseaseCategory);
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         /// <summary>
@@ -73,7 +82,7 @@ namespace EHospital.Diseases.WebAPI.Controllers
         /// <param name="diseaseCategory">A new instance of DiseaseCategory</param>
         /// <returns>Created (with Id) or BadRequest</returns>
         [HttpPost]
-        public IActionResult AddDeseaseCategory([FromBody]DiseaseCategory diseaseCategory)
+        public async Task<IActionResult> AddDeseaseCategory([FromBody]DiseaseCategory diseaseCategory)
         {
             log.Info($"DiseaseCategoryController::AddDeseaseCategory().Adding DiseaseCategory {diseaseCategory.Name}.");
 
@@ -86,11 +95,11 @@ namespace EHospital.Diseases.WebAPI.Controllers
 
             try
             {
-                _service.AddDiseaseCategoryAsync(diseaseCategory);
+                var result = await _service.AddDiseaseCategoryAsync(diseaseCategory);
 
                 log.Info($"DiseaseCategoryController::AddDeseaseCategory(). DiseaseCategory {diseaseCategory.Name} has been added.");
 
-                return Created("diseasecategory/", diseaseCategory.Id);
+                return Created("diseasecategory/", result.Id);
             }
             catch (ArgumentException ex)
             {

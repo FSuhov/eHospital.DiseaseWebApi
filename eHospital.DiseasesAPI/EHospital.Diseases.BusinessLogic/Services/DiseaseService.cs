@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EHospital.Diseases.Model;
@@ -22,11 +23,11 @@ namespace EHospital.Diseases.BusinessLogic.Services
         /// Gets the collection of Diseases existing in the database
         /// </summary>
         /// <returns> The collection of Diseases objects sorted alphabetically</returns>
-        public IQueryable<Disease> GetAllDiseases()
+        public async Task<IEnumerable<Disease>> GetAllDiseases()
         {
             var result = _unitOfWork.Diseases.GetAll();           
 
-            return result.OrderBy(d => d.Name);
+            return await Task.FromResult(result.OrderBy(d => d.Name));
         }
 
         /// <summary>
@@ -34,11 +35,11 @@ namespace EHospital.Diseases.BusinessLogic.Services
         /// </summary>
         /// <param name="categoryId">Id of category to look for</param>
         /// <returns> The collection of Diseases objects sorted alphabetically</returns>
-        public IQueryable<Disease> GetDiseasedByCategory(int categoryId)
+        public async Task<IEnumerable<Disease>> GetDiseasedByCategory(int categoryId)
         {
             var diseases = _unitOfWork.Diseases.GetAll().Where(d => d.CategoryId == categoryId);
 
-            return diseases.OrderBy(d => d.Name);
+            return await Task.FromResult(diseases.OrderBy(d => d.Name));
         }
 
         /// <summary>
@@ -46,11 +47,17 @@ namespace EHospital.Diseases.BusinessLogic.Services
         /// </summary>
         /// <param name="diseaseId">Id of Disease to look for</param>
         /// <returns>Disease object with specified Id or NULL if not found</returns>
-        public Disease GetDiseaseById(int diseaseId)
+        public async Task<Disease> GetDiseaseById(int diseaseId)
         {
-            var disease = _unitOfWork.Diseases.Get(diseaseId);
+            var result = await _unitOfWork.Diseases.Get(diseaseId);
 
-            return disease;
+            if (result == null)
+            {
+                throw new ArgumentNullException("No Disease with such id.");
+            }
+
+            return result;
+
         }
 
         /// <summary>
@@ -81,7 +88,7 @@ namespace EHospital.Diseases.BusinessLogic.Services
         /// <param name="diseaseId">Disease object that has been disabled</param>
         public async Task<Disease> DeleteDiseaseAsync(int diseaseId)
         {
-            var diseaseToDelete = _unitOfWork.Diseases.Get(diseaseId);
+            var diseaseToDelete = await _unitOfWork.Diseases.Get(diseaseId);
 
             if (diseaseToDelete == null)
             {

@@ -36,11 +36,11 @@ namespace EHospital.Diseases.WebAPI.Controllers
         /// <param name="patientId">Id of patient to look for</param>
         /// <returns>Ok with Collection of DiseaseViews</returns>
         [HttpGet("names/{patientId}")]
-        public IActionResult GetDiseasesByPatient(int patientId)
+        public async Task<IActionResult> GetDiseasesByPatient(int patientId)
         {
             log.Info($"PatiendDiseaseController::GetDiseasesOfPatient(). Retrieving entries for patient {patientId}.");
 
-            var diseases = _service.GetDiseaseByPatient(patientId);
+            var diseases = await _service.GetDiseaseByPatient(patientId);
 
             return Ok(Mapper.Map<IEnumerable<DiseaseView>>(diseases));
         }
@@ -52,11 +52,11 @@ namespace EHospital.Diseases.WebAPI.Controllers
         /// <param name="patientId">ID of patient to look for</param>
         /// <returns>Ok with collection of PatientDiseaseInfo</returns>
         [HttpGet("patientid={patientId}")]
-        public IActionResult GetDiseasesByPatientDetailed(int patientId)
+        public async Task <IActionResult> GetDiseasesByPatientDetailed(int patientId)
         {
             log.Info($"PatiendDiseaseController::GetDiseasesOfPatientDetailed(). Retrieving entries for patient {patientId}.");
 
-            var patientDiseases = _service.GetPatientDiseasesInfos(patientId);
+            var patientDiseases = await _service.GetPatientDiseasesInfos(patientId);
 
             return Ok(patientDiseases);
         }
@@ -68,11 +68,11 @@ namespace EHospital.Diseases.WebAPI.Controllers
         /// <param name="patientDiseaseId">Id of PatientDisease entry</param>
         /// <returns>Ok with PatientDiseaseDetails or NotFound</returns>
         [HttpGet("patientDiseaseId={patientDiseaseId}")]
-        public IActionResult GetPatientDisease(int patientDiseaseId)
+        public async Task<IActionResult> GetPatientDisease(int patientDiseaseId)
         {
             log.Info($"PatiendDiseaseController::GetPatientDisease(). Retrieving entries for patient {patientDiseaseId}.");
 
-            var patientDisease = _service.GetPatientDiseaseDetailes(patientDiseaseId);
+            var patientDisease = await _service.GetPatientDiseaseDetailes(patientDiseaseId);
 
             if (patientDisease == null)
             {

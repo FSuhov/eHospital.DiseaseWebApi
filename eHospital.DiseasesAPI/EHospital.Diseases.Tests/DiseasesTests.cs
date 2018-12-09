@@ -5,6 +5,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace EHospital.Diseases.Tests
 {
@@ -34,7 +35,6 @@ namespace EHospital.Diseases.Tests
                 new DiseaseCategory(){Id = 1, Name = "Test Category 1", IsDeleted = false},
                 new DiseaseCategory(){Id = 2, Name = "Test Category 2", IsDeleted = false}
             };
-            
         }
 
         [TestMethod]
@@ -44,7 +44,7 @@ namespace EHospital.Diseases.Tests
             _mockData.Setup(q => q.Diseases.GetAll()).Returns(_diseasesList.AsQueryable);
 
             // Act
-            var actual = new DiseaseService(_mockData.Object).GetAllDiseases().ToList();
+            var actual = new DiseaseService(_mockData.Object).GetAllDiseases().Result.ToList();
 
             // Assert
             Assert.AreEqual(_diseasesList.Count, actual.Count);
@@ -62,7 +62,7 @@ namespace EHospital.Diseases.Tests
             _mockData.Setup(q => q.Categories.GetAll()).Returns(_categoriesList.AsQueryable);
 
             // Act
-            var actual = new DiseaseService(_mockData.Object).GetDiseasedByCategory(categoryId).ToList();
+            var actual = new DiseaseService(_mockData.Object).GetDiseasedByCategory(categoryId).Result.ToList();
 
             // Assert
             Assert.AreEqual(2, actual.Count());
@@ -76,27 +76,25 @@ namespace EHospital.Diseases.Tests
         public void GetDiseaseById_ValidIdTest(int diseaseId)
         {
             // Arrange
-            _mockData.Setup(q => q.Diseases.Get(diseaseId)).Returns(_diseasesList[diseaseId-1]);
+            _mockData.Setup(q => q.Diseases.Get(diseaseId)).ReturnsAsync(_diseasesList[diseaseId-1]);
 
             // Act
-            var actual = new DiseaseService(_mockData.Object).GetDiseaseById(diseaseId);
+            var actual = new DiseaseService(_mockData.Object).GetDiseaseById(diseaseId).Result;
 
             // Assert
             Assert.AreEqual(_diseasesList[diseaseId - 1], actual);
         }
 
         [TestMethod]
-        [DataRow(5)]        
-        public void GetDiseaseById_InValidIdTest(int diseaseId)
+        [DataRow(5)]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public async Task GetDiseaseById_InValidIdTest(int diseaseId)
         {
             // Arrange
-            _mockData.Setup(q => q.Diseases.Get(diseaseId)).Returns(default(Disease));
+            _mockData.Setup(q => q.Diseases.Get(diseaseId)).ReturnsAsync(default(Disease));
 
             // Act
-            var actual = new DiseaseService(_mockData.Object).GetDiseaseById(diseaseId);
-
-            // Assert
-            Assert.AreEqual(null, actual);
+            var actual = await new DiseaseService(_mockData.Object).GetDiseaseById(diseaseId);
         }
 
         [TestMethod]
@@ -126,6 +124,37 @@ namespace EHospital.Diseases.Tests
             // Assert
             Assert.ThrowsExceptionAsync<ArgumentException>(() =>
                 new DiseaseService(_mockData.Object).AddDiseaseAsync(testDisease));
+        }
+
+        [TestMethod]
+        [DataRow(1)]
+        public void DeleteDiseaseAsync_ValidDiseaseId(int diseaseId)
+        {
+            // Arrange
+            _mockData.Setup(q => q.Diseases.Get(diseaseId)).ReturnsAsync(_diseasesList[diseaseId - 1]);
+            _mockData.Setup(q => q.PatientDiseases.GetAll()).Returns(new List<PatientDisease>().AsQueryable);
+
+            // Act
+            var actual = new DiseaseService(_mockData.Object).DeleteDiseaseAsync(diseaseId).Result;
+
+            // Assert
+            Assert.IsTrue(actual.IsDeleted);
+            _mockData.Verify(m => m.Save(), Times.Once);
+        }
+
+        [TestMethod]
+        [DataRow(7)]
+        public void DeleteDiseaseAsync_InvalidDiseaseId_ThrowsArgumentException(int diseaseId)
+        {
+            // Arrange
+            _mockData.Setup(q => q.Diseases.Get(diseaseId)).ReturnsAsync(default(Disease));
+            _mockData.Setup(q => q.PatientDiseases.GetAll()).Returns(new List<PatientDisease>().AsQueryable);
+
+            // Act
+            
+            // Assert
+            Assert.ThrowsExceptionAsync<ArgumentException>(() =>
+                new DiseaseService(_mockData.Object).DeleteDiseaseAsync(diseaseId));
         }
     }
 }

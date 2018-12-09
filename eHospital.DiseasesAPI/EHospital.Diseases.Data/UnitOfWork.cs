@@ -10,14 +10,20 @@ namespace EHospital.Diseases.Data
     {
         private static DiseaseDBContext _context;
 
-        private Repository<Disease> _diseases;
-        private Repository<PatientInfo> _patients;
-        private Repository<DiseaseCategory> _categories;
-        private Repository<UsersData> _users;
-        private Repository<DiseaseCategory> _diseaseCategories;
-        private Repository<PatientDisease> _patientDiseases;
+        private readonly Lazy<Repository<Disease>> _diseases 
+                        = new Lazy<Repository<Disease>>(() => new Repository<Disease>(_context));
+        private readonly Lazy<Repository<PatientInfo>> _patients
+                        = new Lazy<Repository<PatientInfo>>(() => new Repository<PatientInfo>(_context));
+        private readonly Lazy<Repository<DiseaseCategory>> _categories
+                        = new Lazy<Repository<DiseaseCategory>>(() => new Repository<DiseaseCategory>(_context));
+        private readonly Lazy<Repository<UsersData>> _users
+                        = new Lazy<Repository<UsersData>>(() => new Repository<UsersData>(_context));
+        private readonly Lazy<Repository<DiseaseCategory>> _diseaseCategories
+                        = new Lazy<Repository<DiseaseCategory>>(() => new Repository<DiseaseCategory>(_context));
+        private readonly Lazy<Repository<PatientDisease>> _patientDiseases
+                        = new Lazy<Repository<PatientDisease>>(() => new Repository<PatientDisease>(_context));
 
-        private bool disposed = false;
+        private bool _disposed = false;
 
         public UnitOfWork(DiseaseDBContext context)
         {
@@ -26,80 +32,32 @@ namespace EHospital.Diseases.Data
 
         public IRepository<Disease> Diseases
         {
-            get
-            {
-                if (_diseases == null)
-                {
-                    _diseases = new Repository<Disease>(_context);
-                }
-
-                return _diseases;
-            }
+            get => _diseases.Value;
         }
 
         public IRepository<DiseaseCategory> Categories
         {
-            get
-            {
-                if (_categories == null)
-                {
-                    _categories = new Repository<DiseaseCategory>(_context);
-                }
-
-                return _categories;
-            }
+            get => _categories.Value;
         }
 
         public IRepository<PatientInfo> Patients
         {
-            get
-            {
-                if (_patients == null)
-                {
-                    _patients = new Repository<PatientInfo>(_context);
-                }
-
-                return _patients;
-            }
+            get => _patients.Value;
         }
 
         public IRepository<UsersData> Users
         {
-            get
-            {
-                if (_users == null)
-                {
-                    _users = new Repository<UsersData>(_context);
-                }
-
-                return _users;
-            }
+            get => _users.Value;
         }
 
         public IRepository<DiseaseCategory> DiseaseCategories
         {
-            get
-            {
-                if (_diseaseCategories == null)
-                {
-                    _diseaseCategories = new Repository<DiseaseCategory>(_context);
-                }
-
-                return _diseaseCategories;
-            }
+            get => _diseaseCategories.Value;
         }
 
         public IRepository<PatientDisease> PatientDiseases
         {
-            get
-            {
-                if (_patientDiseases == null)
-                {
-                    _patientDiseases = new Repository<PatientDisease>(_context);
-                }
-
-                return _patientDiseases;
-            }
+            get => _patientDiseases.Value;
         }
 
         public void CascadeDeletePatientDisease(int id)
@@ -115,14 +73,14 @@ namespace EHospital.Diseases.Data
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!this.disposed)
+            if (!this._disposed)
             {
                 if (disposing)
                 {
                     _context.Dispose();
                 }
             }
-            this.disposed = true;
+            this._disposed = true;
         }
 
         public void Dispose()

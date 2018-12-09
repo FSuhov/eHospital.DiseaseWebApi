@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace EHospital.Diseases.Tests
 {
@@ -68,7 +69,7 @@ namespace EHospital.Diseases.Tests
             _mockData.Setup(q => q.Diseases.GetAll()).Returns(_diseasesList.AsQueryable);
 
             // Act
-            var actual = new PatientDiseaseService(_mockData.Object).GetDiseaseByPatient(patientId).ToList();
+            var actual = new PatientDiseaseService(_mockData.Object).GetDiseaseByPatient(patientId).Result.ToList();
 
             // Assert
             Assert.AreEqual(2, actual.Count());
@@ -81,10 +82,10 @@ namespace EHospital.Diseases.Tests
         public void GetPatientDiseaseTest_ValidPatientDiseaseId(int patientDiseaseId)
         {
             // Arrange
-            _mockData.Setup(q => q.PatientDiseases.Get(patientDiseaseId)).Returns(_patientDiseasesList[patientDiseaseId - 1]);
+            _mockData.Setup(q => q.PatientDiseases.Get(patientDiseaseId)).ReturnsAsync(_patientDiseasesList[patientDiseaseId - 1]);
 
             // Act
-            var actual = new PatientDiseaseService(_mockData.Object).GetPatientDisease(patientDiseaseId);
+            var actual = new PatientDiseaseService(_mockData.Object).GetPatientDisease(patientDiseaseId).Result;
 
             // Assert
             Assert.AreEqual(_patientDiseasesList[patientDiseaseId - 1], actual);
@@ -92,21 +93,19 @@ namespace EHospital.Diseases.Tests
 
         [TestMethod]
         [DataRow(5)]
-        public void GetPatientDiseaseTest_InValidPatientDiseaseId(int patientDiseaseId)
+        [ExpectedException(typeof(ArgumentNullException))]
+        public async Task GetPatientDiseaseTest_InValidPatientDiseaseId(int patientDiseaseId)
         {
             // Arrange
-            _mockData.Setup(q => q.PatientDiseases.Get(patientDiseaseId)).Returns(default(PatientDisease));
+            _mockData.Setup(q => q.PatientDiseases.Get(patientDiseaseId)).ReturnsAsync(default(PatientDisease));
 
             // Act
-            var actual = new PatientDiseaseService(_mockData.Object).GetPatientDisease(patientDiseaseId);
-
-            // Assert
-            Assert.AreEqual(null, actual);
+            var actual = await new PatientDiseaseService(_mockData.Object).GetPatientDisease(patientDiseaseId);
         }
 
         [TestMethod]
         [DataRow(2)]
-        public void GetPatientDiseasesInfosTest(int patientId)
+        public async Task GetPatientDiseasesInfosTest(int patientId)
         {
             // Arrange
             _mockData.Setup(q => q.PatientDiseases.GetAll()).Returns(_patientDiseasesList.AsQueryable);
@@ -122,7 +121,7 @@ namespace EHospital.Diseases.Tests
             };
 
             // Act
-            var actual = new PatientDiseaseService(_mockData.Object).GetPatientDiseasesInfos(patientId);
+            var actual = await new PatientDiseaseService(_mockData.Object).GetPatientDiseasesInfos(patientId);
 
             // Assert
             Assert.AreEqual(expected.Count(), actual.Count());

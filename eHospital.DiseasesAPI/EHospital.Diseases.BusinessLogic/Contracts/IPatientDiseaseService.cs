@@ -7,17 +7,17 @@ namespace EHospital.Diseases.BusinessLogic.Contracts
 {
     public interface IPatientDiseaseService
     {
-        IQueryable<Disease> GetDiseaseByPatient(int patientId);
+        Task<IEnumerable<Disease>> GetDiseaseByPatient(int patientId);
 
-        PatientDisease GetPatientDisease(int patientDiseaseId);
+        Task <PatientDisease> GetPatientDisease(int patientDiseaseId);
 
-        IQueryable<PatientDisease> GetPatientDiseasesByPatient(int patientId);
+        Task <IEnumerable<PatientDisease>> GetPatientDiseasesByPatient(int patientId);
 
         Task<PatientDisease> AddPatientDiseaseAsync(PatientDisease patientDisease);        
 
-        IEnumerable<PatientDiseaseInfo> GetPatientDiseasesInfos(int patientId);
+        Task<IEnumerable<PatientDiseaseInfo>> GetPatientDiseasesInfos(int patientId);
 
-        PatientDiseaseDetails GetPatientDiseaseDetailes(int patientDiseaseId);
+        Task <PatientDiseaseDetails> GetPatientDiseaseDetailes(int patientDiseaseId);
 
         Task<PatientDisease> UpdatePatientDiseaseAsync(int id, PatientDiseaseDetails patientDiseaseDetails);
 

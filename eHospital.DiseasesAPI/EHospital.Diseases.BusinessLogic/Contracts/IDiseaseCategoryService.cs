@@ -1,4 +1,5 @@
-﻿using EHospital.Diseases.Model;
+﻿using System.Collections.Generic;
+using EHospital.Diseases.Model;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -6,9 +7,9 @@ namespace EHospital.Diseases.BusinessLogic.Contracts
 {
     public interface IDiseaseCategoryService
     {
-        IQueryable<DiseaseCategory> GetDiseaseCategories();
+        Task<IEnumerable<DiseaseCategory>> GetDiseaseCategories();
 
-        DiseaseCategory GetDiseaseCategoryById(int id);
+        Task<DiseaseCategory> GetDiseaseCategoryById(int id);
 
         Task<DiseaseCategory> AddDiseaseCategoryAsync(DiseaseCategory diseaseCategory);
     }

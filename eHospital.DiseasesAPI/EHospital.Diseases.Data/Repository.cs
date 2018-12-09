@@ -3,6 +3,7 @@ using EHospital.Diseases.Model;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace EHospital.Diseases.Data
 {
@@ -28,9 +29,9 @@ namespace EHospital.Diseases.Data
             return _entities.Where(e => e.IsDeleted != true).Where(predicate).AsNoTracking();
         }
 
-        public T Get(int id)
+        public async Task<T> Get(int id)
         {
-            T item = _entities.Find(id);
+            T item = await _entities.FindAsync(id);
             if (item.IsDeleted != true)
             {
                 return item;

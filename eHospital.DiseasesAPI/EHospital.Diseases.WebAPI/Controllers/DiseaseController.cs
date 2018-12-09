@@ -35,13 +35,14 @@ namespace EHospital.Diseases.WebAPI.Controllers
         /// </summary>
         /// <returns>Ok with Collection of DiseaseView objects</returns>
         [HttpGet]
-        public IActionResult GetAllDiseases()
+        public async Task<IActionResult> GetAllDiseases()
         {
             log.Info("DiseaseController::GetAllDiseases. Retrieving all entries of diseases.");
 
-            var diseases = _service.GetAllDiseases();
+            var diseases = await _service.GetAllDiseases();
+            var diseasesViews = Mapper.Map<IEnumerable<DiseaseView>>(diseases);
 
-            return Ok(Mapper.Map<IEnumerable<DiseaseView>>(diseases));
+            return Ok(diseasesViews);
         }
 
         /// <summary>
@@ -50,13 +51,14 @@ namespace EHospital.Diseases.WebAPI.Controllers
         /// </summary>
         /// <returns>OK with Collection of DiseaseView objects</returns>
         [HttpGet("categoryid={categoryId}")]
-        public IActionResult GetDiseasesByCategory(int categoryId)
+        public async Task<IActionResult> GetDiseasesByCategory(int categoryId)
         {
             log.Info($"DiseaseController::GetDiseasesByCategory. Retrieving all entries of diseases of Category {categoryId}.");
 
-            var diseases = _service.GetDiseasedByCategory(categoryId);
+            var diseases = await _service.GetDiseasedByCategory(categoryId);
+            var diseasesViews = Mapper.Map<IEnumerable<DiseaseView>>(diseases);
 
-            return Ok(Mapper.Map<IEnumerable<DiseaseView>>(diseases));
+            return Ok(diseasesViews);
         }
 
         /// <summary>
@@ -65,11 +67,11 @@ namespace EHospital.Diseases.WebAPI.Controllers
         /// </summary>
         /// <returns>OK with Disease object or NotFound</returns>
         [HttpGet("{diseaseId}")]
-        public IActionResult GetDisease(int diseaseId)
+        public async Task<IActionResult> GetDisease(int diseaseId)
         {
             log.Info($"DiseaseController::GetDisease. Retrieving Disease with ID {diseaseId}.");
 
-            var disease = _service.GetDiseaseById(diseaseId);
+            var disease = await _service.GetDiseaseById(diseaseId);
 
             if (disease == null)
             {
@@ -88,7 +90,7 @@ namespace EHospital.Diseases.WebAPI.Controllers
         /// <param name="disease">A new instance of Disease</param>
         /// <returns>Created (with Id) or BadRequest</returns>
         [HttpPost]
-        public IActionResult AddDesease([FromBody]Disease disease)
+        public async Task<IActionResult> AddDesease([FromBody]Disease disease)
         {
             log.Info($"DiseaseController::AddDisease.Adding Disease {disease.Name}.");
 
@@ -101,7 +103,7 @@ namespace EHospital.Diseases.WebAPI.Controllers
 
             try
             {
-                var addedDisease = _service.AddDiseaseAsync(disease);
+                var addedDisease = await _service.AddDiseaseAsync(disease);
 
                 log.Info($"DiseaseController::AddDisease. Disease {disease.Name} added.");
 

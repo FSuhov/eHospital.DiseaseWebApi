@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EHospital.Diseases.Model;
@@ -14,7 +15,7 @@ namespace EHospital.Diseases.BusinessLogic.Services
         private readonly IUniteOfWork _unitOfWork;
 
         /// <summary>
-        /// Initilializes new instance of DiseaseCategoryService class
+        /// Initializes new instance of DiseaseCategoryService class
         /// </summary>
         /// <param name="unitOfWork"> Concrete instance of UnitOfWork, injected in startup.cs </param>
         public DiseaseCategoryService(IUniteOfWork unitOfWork)
@@ -26,23 +27,23 @@ namespace EHospital.Diseases.BusinessLogic.Services
         /// Gets the collection of DiseaseCategories entries existing in the database
         /// </summary>
         /// <returns> The collection of DiseaseCategories objects sorted alphabetically</returns>
-        public IQueryable<DiseaseCategory> GetDiseaseCategories()
+        public async Task<IEnumerable<DiseaseCategory>> GetDiseaseCategories()
         {
             var result = _unitOfWork.DiseaseCategories.GetAll();
 
-            return result.OrderBy(d => d.Name);
+            return await Task.FromResult(result.OrderBy(d => d.Name));
         }
 
         /// <summary>
         /// Looks for DiseaseCategory entry with requested Id
         /// </summary>
-        /// <param name="diseaseId">Id of Category to look for</param>
+        /// <param name="id">Id of Category to look for</param>
         /// <returns>DiseaseCategory entry with specified Id or NULL if not found</returns>
-        public DiseaseCategory GetDiseaseCategoryById(int id)
+        public async Task<DiseaseCategory> GetDiseaseCategoryById(int id)
         {
-            var result = _unitOfWork.DiseaseCategories.Get(id);
+            var result = await _unitOfWork.DiseaseCategories.Get(id);
 
-            return result as DiseaseCategory;
+            return result;
         }
 
         /// <summary>

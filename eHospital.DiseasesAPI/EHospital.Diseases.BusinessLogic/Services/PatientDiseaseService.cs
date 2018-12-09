@@ -27,13 +27,14 @@ namespace EHospital.Diseases.BusinessLogic.Services
         /// Gets the collection of Disease entries related to Patient with specified Id.    
         /// </summary>
         /// <returns> The collection of Diseases objects sorted alphabetically</returns>
-        public IQueryable<Disease> GetDiseaseByPatient(int patientId)
+        public async Task<IEnumerable<Disease>> GetDiseaseByPatient(int patientId)
         {
-            var diseasesOfPatient = from diseases in _unitOfWork.PatientDiseases.GetAll()
+            var diseasesOfPatient = await Task.FromResult
+                                    (from diseases in _unitOfWork.PatientDiseases.GetAll()
                                     where diseases.PatientId == patientId
                                     join disease in _unitOfWork.Diseases.GetAll()
                                     on diseases.DiseaseId equals disease.Id
-                                    select disease;
+                                    select disease);
 
             return diseasesOfPatient.OrderBy(d => d.Name);
         }
@@ -42,9 +43,9 @@ namespace EHospital.Diseases.BusinessLogic.Services
         /// Gets the collection of PatientDisease entries related to Patient with specified Id.    
         /// </summary>
         /// <returns> The collection of PatientDisease objects</returns>
-        public IQueryable<PatientDisease> GetPatientDiseasesByPatient(int patientId)
+        public async Task<IEnumerable<PatientDisease>> GetPatientDiseasesByPatient(int patientId)
         {
-            var patientDiseases = _unitOfWork.PatientDiseases.GetAll().Where(d => d.PatientId == patientId);
+            var patientDiseases = await Task.FromResult(_unitOfWork.PatientDiseases.GetAll().Where(d => d.PatientId == patientId));
 
             return patientDiseases;
         }
@@ -54,11 +55,16 @@ namespace EHospital.Diseases.BusinessLogic.Services
         /// </summary>
         /// <param name="patientDiseaseId">Id of PatientDisease entry to look for</param>
         /// <returns>PatientDisease object or NULL if not found</returns>
-        public PatientDisease GetPatientDisease(int patientDiseaseId)
+        public async Task<PatientDisease> GetPatientDisease(int patientDiseaseId)
         {
-            var patientDisease = _unitOfWork.PatientDiseases.Get(patientDiseaseId);
+            var result = await _unitOfWork.PatientDiseases.Get(patientDiseaseId);
 
-            return patientDisease;
+            if (result == null)
+            {
+                throw new ArgumentNullException("No PatientDisease with such id.");
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -83,7 +89,7 @@ namespace EHospital.Diseases.BusinessLogic.Services
         /// <returns></returns>
         public async Task<PatientDisease> UpdatePatientDiseaseAsync(int patientDiseaseId, PatientDisease patientDisease)
         {
-            var patientDiseaseUpdated = _unitOfWork.PatientDiseases.Get(patientDiseaseId);
+            var patientDiseaseUpdated = await _unitOfWork.PatientDiseases.Get(patientDiseaseId);
             if (patientDiseaseUpdated == null)
             {
                 throw new ArgumentException("No such record");
@@ -100,9 +106,10 @@ namespace EHospital.Diseases.BusinessLogic.Services
         /// </summary>
         /// <param name="patientId">Id of patient to look for</param>
         /// <returns>Collection of objects in PatientDiseaseInfo view</returns>
-        public IEnumerable<PatientDiseaseInfo> GetPatientDiseasesInfos(int patientId)
+        public async Task<IEnumerable<PatientDiseaseInfo>> GetPatientDiseasesInfos(int patientId)
         {
-            var infos = from pd in _unitOfWork.PatientDiseases.GetAll()
+            var infos = await Task.FromResult
+                        (from pd in _unitOfWork.PatientDiseases.GetAll()
                         where pd.PatientId == patientId
                         join dis in _unitOfWork.Diseases.GetAll()
                         on pd.DiseaseId equals dis.Id
@@ -118,7 +125,7 @@ namespace EHospital.Diseases.BusinessLogic.Services
                             IsCurrent = (pd.EndDate == null),
                             CategoryName = cat.Name,
                             Doctor = user.LastName
-                        };
+                        });
 
             return infos;
         } 
@@ -129,9 +136,10 @@ namespace EHospital.Diseases.BusinessLogic.Services
         /// </summary>
         /// <param name="patientDiseaseId">Id of PatiendDisease instance to look for </param>
         /// <returns> Readable Representation of PatientDisease with reference's Ids replaced with text Names </returns>
-        public PatientDiseaseDetails GetPatientDiseaseDetailes (int patientDiseaseId)
+        public async Task<PatientDiseaseDetails> GetPatientDiseaseDetailes (int patientDiseaseId)
         {
-            var diseaseDetails =  from pd in _unitOfWork.PatientDiseases.GetAll()
+            var diseaseDetails =  await Task.FromResult
+                                  (from pd in _unitOfWork.PatientDiseases.GetAll()
                                   where pd.Id == patientDiseaseId
                                   from dis in _unitOfWork.Diseases.GetAll()
                                   where dis.Id == pd.DiseaseId
@@ -149,7 +157,7 @@ namespace EHospital.Diseases.BusinessLogic.Services
                                       EndDate = pd.EndDate,
                                       Notes = pd.Note,
                                       Doctor = user.LastName
-                                  };
+                                  });
 
             return diseaseDetails.FirstOrDefault();
         }
@@ -162,7 +170,7 @@ namespace EHospital.Diseases.BusinessLogic.Services
         /// <returns>Updates instance of PatientDisease </returns>
         public async Task<PatientDisease> UpdatePatientDiseaseAsync(int id, PatientDiseaseDetails patientDiseaseDetails)
         {
-            var patientDiseaseToUpdate = _unitOfWork.PatientDiseases.Get(id);
+            var patientDiseaseToUpdate = await _unitOfWork.PatientDiseases.Get(id);
             patientDiseaseToUpdate.EndDate = patientDiseaseDetails.EndDate;
             patientDiseaseToUpdate.Note = patientDiseaseDetails.Notes;
             patientDiseaseToUpdate.UserId = _unitOfWork.Users.GetAll().First(u => u.LastName == patientDiseaseDetails.Doctor).Id;
@@ -178,7 +186,7 @@ namespace EHospital.Diseases.BusinessLogic.Services
         /// <param name="id">Id of PatientDisease instance to be deleted</param>        
         public async Task DeletePatientDiseaseAsync(int id)
         {
-            var patientDiseaseToDelete = _unitOfWork.PatientDiseases.Get(id);
+            var patientDiseaseToDelete = await _unitOfWork.PatientDiseases.Get(id);
 
             if (patientDiseaseToDelete == null)
             {
