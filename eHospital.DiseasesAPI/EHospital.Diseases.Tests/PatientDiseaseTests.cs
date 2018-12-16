@@ -12,7 +12,7 @@ namespace EHospital.Diseases.Tests
     [TestClass]
     public class PatientDiseaseTests
     {
-        private static Mock<IRepository<Disease>> _mockRepo;        
+        private static Mock<IRepository<PatientDisease>> _mockRepo;        
         private static Mock<IUniteOfWork> _mockData;
         private List<Disease> _diseasesList;
         private List<DiseaseCategory> _categoriesList;
@@ -23,9 +23,9 @@ namespace EHospital.Diseases.Tests
         [TestInitialize]
         public void Initialize()
         {
-            _mockRepo = new Mock<IRepository<Disease>>();
+            _mockRepo = new Mock<IRepository<PatientDisease>>();
             _mockData = new Mock<IUniteOfWork>();
-            _mockData.Setup(s => s.Diseases).Returns(_mockRepo.Object);
+            _mockData.Setup(s => s.PatientDiseases).Returns(_mockRepo.Object);
             _diseasesList = new List<Disease>()
             {
                 new Disease(){Id = 1, CategoryId = 1, Name = "Test Disease Name 1", Description = "Test Disease Name 1 Description Text", IsDeleted = false},
@@ -78,6 +78,51 @@ namespace EHospital.Diseases.Tests
         }
 
         [TestMethod]
+        [DataRow(15)]
+        public void GetDiseaseByPatientTest_InValidPatientId(int patientId)
+        {
+            // Arrange
+            _mockData.Setup(q => q.PatientDiseases.GetAll()).Returns(_patientDiseasesList.AsQueryable);
+            _mockData.Setup(q => q.Diseases.GetAll()).Returns(_diseasesList.AsQueryable);
+
+            // Act
+            var actual = new PatientDiseaseService(_mockData.Object).GetDiseaseByPatient(patientId).Result.ToList();
+
+            // Assert
+            Assert.AreEqual(0, actual.Count());
+        }
+
+        [TestMethod]
+        [DataRow(2)]
+        public void GetPatientDiseaseByPatientTest_ReturnsPatientDiseases_ValidPatientId(int patientId)
+        {
+            // Arrange
+            _mockData.Setup(q => q.PatientDiseases.GetAll()).Returns(_patientDiseasesList.AsQueryable);
+
+            // Act
+            var actualPatientDiseases = new PatientDiseaseService(_mockData.Object).GetPatientDiseasesByPatient(patientId).Result.ToList();
+
+            // Assert
+            Assert.AreEqual(2, actualPatientDiseases.Count());
+            Assert.AreEqual(_patientDiseasesList[1], actualPatientDiseases[0]);
+            Assert.AreEqual(_patientDiseasesList[2], actualPatientDiseases[1]);
+        }
+
+        [TestMethod]
+        [DataRow(15)]
+        public void GetPatientDiseaseByPatientTest_ReturnsPatientDiseases_InValidPatientId(int patientId)
+        {
+            // Arrange
+            _mockData.Setup(q => q.PatientDiseases.GetAll()).Returns(_patientDiseasesList.AsQueryable);
+
+            // Act
+            var actualPatientDiseases = new PatientDiseaseService(_mockData.Object).GetPatientDiseasesByPatient(patientId).Result.ToList();
+
+            // Assert
+            Assert.AreEqual(0, actualPatientDiseases.Count());
+        }
+
+        [TestMethod]
         [DataRow(2)]
         public void GetPatientDiseaseTest_ValidPatientDiseaseId(int patientDiseaseId)
         {
@@ -103,9 +148,38 @@ namespace EHospital.Diseases.Tests
             var actual = await new PatientDiseaseService(_mockData.Object).GetPatientDisease(patientDiseaseId);
         }
 
+
+        [TestMethod]
+        public void AddPatientDiseaseAsyncTest()
+        {
+            // Arrange
+            _mockData.Setup(q => q.PatientDiseases.GetAll()).Returns(_patientDiseasesList.AsQueryable);
+            PatientDisease toBeAdded = new PatientDisease()
+            {
+                Id = 4,
+                DiseaseId = 1,
+                UserId = 2,
+                StartDate = new DateTime(2018, 11, 2),
+                EndDate = null,
+                Note = "Passing medication course",
+                PatientId = 2,
+                IsDeleted = false
+            };
+            _mockData.Setup(q => q.PatientDiseases.Insert(toBeAdded)).Returns(toBeAdded);
+
+            // Act
+            var actualAdded = new PatientDiseaseService(_mockData.Object).AddPatientDiseaseAsync(toBeAdded).Result;
+
+            // Assert
+            Assert.AreEqual(3, _patientDiseasesList.Count());
+            Assert.AreEqual(toBeAdded, actualAdded);
+            _mockData.Verify(d => d.Save(), Times.Once);
+        }
+
+
         [TestMethod]
         [DataRow(2)]
-        public async Task GetPatientDiseasesInfosTest(int patientId)
+        public async Task GetPatientDiseasesInfosTest_ValidPatientId(int patientId)
         {
             // Arrange
             _mockData.Setup(q => q.PatientDiseases.GetAll()).Returns(_patientDiseasesList.AsQueryable);
@@ -135,6 +209,26 @@ namespace EHospital.Diseases.Tests
             Assert.AreEqual(expected.ElementAt(1).Name, actual.ElementAt(1).Name);
             Assert.AreEqual(expected.ElementAt(0).Doctor, actual.ElementAt(0).Doctor);
             Assert.AreEqual(expected.ElementAt(1).Doctor, actual.ElementAt(1).Doctor);
+        }
+
+        [TestMethod]
+        [DataRow(15)]
+        public async Task GetPatientDiseasesInfosTest_InvalidPatientId(int patientId)
+        {
+            // Arrange
+            _mockData.Setup(q => q.PatientDiseases.GetAll()).Returns(_patientDiseasesList.AsQueryable);
+            _mockData.Setup(q => q.Diseases.GetAll()).Returns(_diseasesList.AsQueryable);
+            _mockData.Setup(q => q.Categories.GetAll()).Returns(_categoriesList.AsQueryable);
+            _mockData.Setup(q => q.Patients.GetAll()).Returns(_patientsList.AsQueryable);
+            _mockData.Setup(q => q.Users.GetAll()).Returns(_usersList.AsQueryable);
+
+            IEnumerable<PatientDiseaseInfo> expected = new List<PatientDiseaseInfo>();
+
+            // Act
+            var actual = await new PatientDiseaseService(_mockData.Object).GetPatientDiseasesInfos(patientId);
+
+            // Assert
+            Assert.AreEqual(expected.Count(), actual.Count());
         }
     }
 }

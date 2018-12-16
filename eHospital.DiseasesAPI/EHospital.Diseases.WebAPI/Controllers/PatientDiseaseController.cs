@@ -72,7 +72,7 @@ namespace EHospital.Diseases.WebAPI.Controllers
         {
             log.Info($"PatiendDiseaseController::GetPatientDisease(). Retrieving entries for patient {patientDiseaseId}.");
 
-            var patientDisease = await _service.GetPatientDiseaseDetailes(patientDiseaseId);
+            var patientDisease = await _service.GetPatientDiseaseDetails(patientDiseaseId);
 
             if (patientDisease == null)
             {

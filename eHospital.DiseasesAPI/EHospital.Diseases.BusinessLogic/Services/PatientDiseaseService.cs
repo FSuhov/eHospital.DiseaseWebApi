@@ -136,7 +136,7 @@ namespace EHospital.Diseases.BusinessLogic.Services
         /// </summary>
         /// <param name="patientDiseaseId">Id of PatiendDisease instance to look for </param>
         /// <returns> Readable Representation of PatientDisease with reference's Ids replaced with text Names </returns>
-        public async Task<PatientDiseaseDetails> GetPatientDiseaseDetailes (int patientDiseaseId)
+        public async Task<PatientDiseaseDetails> GetPatientDiseaseDetails (int patientDiseaseId)
         {
             var diseaseDetails =  await Task.FromResult
                                   (from pd in _unitOfWork.PatientDiseases.GetAll()

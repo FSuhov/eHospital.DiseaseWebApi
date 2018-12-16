@@ -17,7 +17,7 @@ namespace EHospital.Diseases.BusinessLogic.Contracts
 
         Task<IEnumerable<PatientDiseaseInfo>> GetPatientDiseasesInfos(int patientId);
 
-        Task <PatientDiseaseDetails> GetPatientDiseaseDetailes(int patientDiseaseId);
+        Task <PatientDiseaseDetails> GetPatientDiseaseDetails(int patientDiseaseId);
 
         Task<PatientDisease> UpdatePatientDiseaseAsync(int id, PatientDiseaseDetails patientDiseaseDetails);
 
